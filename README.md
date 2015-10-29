@@ -18,7 +18,7 @@ HttpClient client = HttpClients.custom()
         .setSslcontext(sslContext)
         .build();
      
-HttpResponse response = client.execute(new HttpGet(new URI("https://avus-q.vw.vwg/jctavus")));
+HttpResponse response = client.execute(new HttpGet(new URI("https://secure.server")));
          
 assertEquals(200, response.getStatusLine().getStatusCode());
 ```
