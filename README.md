@@ -4,7 +4,7 @@ ssl-utils is a bundle of factories and tools to access PublicKeyInfrastructure i
 ## KeyStoreBuilder
 The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html).
 
-### Example: create a KeyStore with WindowsMy PKI
+### create a KeyStore with WindowsMy PKI
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.WINDOWS_MY)
@@ -13,7 +13,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 		.build();
 ```
 
-### Example: create a KeySTore with PKCS12-certificate PKI
+### create a KeySTore with PKCS12-certificate PKI
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS12)
@@ -21,7 +21,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 		.build();
 ```
 
-### Example: create a KeyStore that provides PKI via a custom PKCS11 implementation 
+### create a KeyStore with custom PKI 
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setLibraryPath("/path/to/custom/pkcs11.lib")
@@ -31,14 +31,14 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ## SSLContextBuilder
 The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html).
 
-### Example: create a SSLContext from a KeyStore
+### create a SSLContext from a KeyStore
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setKeyStore(keyStore)
 		.build();
 ```
 
-### Example: create a SSLContext and provide the password to access the KeyStore
+### create a SSLContext and provide the password to access the KeyStore
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		...
@@ -46,7 +46,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-### Example: create a SSLContext and allow self signed client certificates
+### create a SSLContext and allow self signed client certificates
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		...
@@ -54,7 +54,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-### Example: use it to request an access restricted resource with the Apache HTTP Client
+### usage with the Apache HTTP Client
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS12)
