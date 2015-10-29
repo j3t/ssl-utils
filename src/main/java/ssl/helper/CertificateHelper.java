@@ -54,11 +54,11 @@ public class CertificateHelper
     }
 
     /**
-     * Liefert das Ablaufdatum eines Zertifikats.
+     * Gets the end date of the validity period of a given certificate.
      * 
-     * @param certificate Das zu prüfende Zertifikat
+     * @param certificate the given certificate
      * 
-     * @return Liefert das Ablaufdatum des {@link X509Certificate} oder <code>null</code>
+     * @return the end date of the validity period, or <code>null</code> if no certificate is given or the certificate isn't an X509  
      */
     public static Date getExpirationDate(Certificate certificate)
     {
