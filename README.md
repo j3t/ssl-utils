@@ -1,2 +1,2 @@
 # ssl-utils
-This library simplifies the authentication process with public key infrastructure in Java applications.
+This library provides easy access to public key infrastructure in Java applications.
