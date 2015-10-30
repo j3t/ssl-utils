@@ -13,7 +13,7 @@ import org.junit.Test;
 import ssl.builder.KeyStoreBuilder;
 import ssl.helper.KeyStoreHelper;
 
-public class KeyStoreBuilderWithSoftPseIT
+public class KeyStoreBuilderWithPKCS12IT
 {
     private KeyStoreBuilder builder;
 
@@ -23,7 +23,7 @@ public class KeyStoreBuilderWithSoftPseIT
         builder = KeyStoreBuilder.create().setType(PKCS12);
     }
 
-    @Ignore("soft pse reqired")
+    @Ignore("archive file required")
     @Test
     public void keyStoreShouldContainsAtLeastOneAlias() throws Exception
     {

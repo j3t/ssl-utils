@@ -13,12 +13,11 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509KeyManager;
 
-import ssl.helper.TrustManagerHelper;
 import ssl.strategy.AliasSelectionStrategy;
 import ssl.strategy.StrategyKeyManager;
 
 /**
- * A builder pattern style {@link SSLContext} factory, especially for Volkswagen PKI.
+ * A builder pattern style factory to create a {@link SSLContext}.
  * 
  * @author j3t
  */
@@ -105,14 +104,9 @@ public class SSLContextBuilder
     public SSLContext build() throws GeneralSecurityException, IOException
     {
         SSLContext ctx = SSLContext.getInstance(protocol);
-        ctx.init(createKeyManagers(), createTrustManagers(), secureRandomGenerator);
+        ctx.init(createKeyManagers(), trustManagers, secureRandomGenerator);
         
         return ctx;
-    }
-
-    protected TrustManager[] createTrustManagers()
-    {
-        return trustManagers == null ? TrustManagerHelper.createWindowsRootTrustManagers() : trustManagers;
     }
 
     protected KeyManager[] createKeyManagers() throws GeneralSecurityException

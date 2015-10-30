@@ -2,8 +2,6 @@
 package ssl.builder;
 
 
-import static ssl.KeyStoreType.PKCS11;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,7 +22,7 @@ import ssl.KeyStoreProvider;
 import ssl.KeyStoreType;
 
 /**
- * A builder pattern style {@link KeyStore} factory with PKI.
+ * A builder pattern style factory to crate a {@link KeyStore}.
  * 
  * @author j3t
  */
@@ -184,7 +182,7 @@ public class KeyStoreBuilder
 		
     	registerProvider(name, libraryPath);
     	
-    	setType(PKCS11).setProvider("SunPKCS11-" + name);
+    	setProvider("SunPKCS11-" + name);
 	}
 
 	private void registerProvider(String name, String library) throws IOException

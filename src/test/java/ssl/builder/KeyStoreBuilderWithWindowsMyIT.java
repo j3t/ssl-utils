@@ -13,7 +13,7 @@ import org.junit.Test;
 import ssl.builder.KeyStoreBuilder;
 import ssl.helper.KeyStoreHelper;
 
-@Ignore("windows-my keystore with at least three certificates with the same alias required")
+@Ignore("windows-my keystore with certificates required")
 public class KeyStoreBuilderWithWindowsMyIT
 {
     
