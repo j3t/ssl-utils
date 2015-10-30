@@ -18,7 +18,7 @@ import ssl.KeyUsage;
 /**
  * The {@link KeyStoreHelper} provides operations that often used with a {@link KeyStore}.
  * 
- * @author EEXTHLR
+ * @author j3t
  */
 public class KeyStoreHelper
 {

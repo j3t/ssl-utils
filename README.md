@@ -8,7 +8,7 @@ The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java
 To create a KeyStore with the KeyStoreBuilder, you have to provide the type and the provider of the store. The following examples contains some use cases.
 
 ##### To access the Windows certificate store ...
-the type must be 'Windows-MY' and the provider 'SunMSCAPI'. To prevent duplicate alias, the property 'fixAliases' must be set to true.
+the type must be 'Windows-MY' and the provider 'SunMSCAPI'. To prevent duplicate aliases, the property 'fixAliases' must be set to true.
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.WINDOWS_MY)
@@ -76,7 +76,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-##### to choose an alias when more than one are available in the KeyStore
+##### to choose an alias when more than one aliases are available in the KeyStore
 the aliasSelectionStrategy must be implemented and configured.
 ```java
 SSLContext sslContext = SSLContextBuilder.create()

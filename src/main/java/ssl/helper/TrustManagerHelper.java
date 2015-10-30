@@ -1,6 +1,9 @@
 
 package ssl.helper;
 
+import static ssl.KeyStoreProvider.SUN_MSCAPI;
+import static ssl.KeyStoreType.WINDOWS_MY;
+import static ssl.KeyStoreType.WINDOWS_ROOT;
 
 import java.security.KeyStore;
 
@@ -12,21 +15,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ssl.AllowAllTrustManager;
-import ssl.KeyStoreProvider;
-import ssl.KeyStoreType;
 import ssl.LoggingTrustManager;
 
 /**
  * {@link TrustManagerHelper} provides factory methods for some common {@link TrustManager} implementation.
  * 
- * @author EEXTHLR
+ * @author j3t
  */
 public class TrustManagerHelper
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrustManagerHelper.class);
 
     /**
-     * Creates the allow all {@link TrustManager}s.
+     * Creates {@link TrustManager}s, that accept's all certificates.
      *
      * @see AllowAllTrustManager
      * 
@@ -38,7 +39,7 @@ public class TrustManagerHelper
     }
 
     /**
-     * Creates the Windows-My KeyStore and returns the {@link TrustManager}s.
+     * Creates the Windows-My KeyStore and returns there {@link TrustManager}s.
      * 
      * @return Array with {@link TrustManager}s, or an empty array
      */
@@ -46,7 +47,7 @@ public class TrustManagerHelper
     {
         try
         {
-            KeyStore trustStore = KeyStore.getInstance(KeyStoreType.WINDOWS_MY, KeyStoreProvider.SUNMSCAPI);
+            KeyStore trustStore = KeyStore.getInstance(WINDOWS_MY, SUN_MSCAPI);
             trustStore.load(null, null);
 
             String defaultAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
@@ -63,7 +64,7 @@ public class TrustManagerHelper
     }
     
     /**
-     * Creates the Windows-My KeyStore and returns the {@link TrustManager}s.
+     * Creates the Windows-Root KeyStore and returns there {@link TrustManager}s.
      * 
      * @return Array with {@link TrustManager}s, or an empty array
      */
@@ -71,7 +72,7 @@ public class TrustManagerHelper
     {
         try
         {
-            KeyStore trustStore = KeyStore.getInstance(KeyStoreType.WINDOWS_ROOT, KeyStoreProvider.SUNMSCAPI);
+            KeyStore trustStore = KeyStore.getInstance(WINDOWS_ROOT, SUN_MSCAPI);
             trustStore.load(null, null);
 
             String defaultAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
@@ -88,10 +89,10 @@ public class TrustManagerHelper
     }
     
     /**
-     * Proxy of a given array of {@link TrustManager} for logging purposes.
+     * Add's to a given array of {@link TrustManager}s an logging aspect.
      * 
      * @param trustManagers the array of given {@link TrustManager}s
-     * @return array of the same size and the same behavior, but with logging informations
+     * @return array of the same size and the same behavior as the given one and with logging informations
      */
     public static TrustManager[] proxyWithLoggingTrustManager(TrustManager[] trustManagers)
     {

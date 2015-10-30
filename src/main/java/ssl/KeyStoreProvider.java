@@ -3,11 +3,23 @@ package ssl;
 
 
 /**
- * Constants representing the names of some common key store provider.
+ * Constants with the names of the most common key store provider.
  * 
  * @author j3t
  */
 public interface KeyStoreProvider
 {
-    String SUNMSCAPI = "SunMSCAPI";
+    String SUN_PKCS11 = "SunPKCS11";
+    String SUN = "SUN";
+    String SUN_RSA_SIGN = "SunRsaSign";
+    String SUN_JSSE = "SunJSSE";
+    String SUN_JCE = "SunJCE";
+    String SUN_JGSS = "SunJGSS";
+    String SUN_SASL = "SunSASL";
+    String XMLD_SIG = "XMLDSig";
+    String SUN_PCSC = "SunPCSC";
+    String SUN_MSCAPI = "SunMSCAPI";
+    String SUN_EC = "SunEC";
+    String ORACLE_UCRYPTO = "OracleUcrypto";
+    String APPLE = "Apple";
 }
