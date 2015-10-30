@@ -4,7 +4,7 @@ ssl-utils is a bundle of factories and tools to access PublicKeyInfrastructure i
 ### KeyStoreBuilder
 The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html).
 
-##### PKI via Windows
+##### Windows certificate store
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.WINDOWS_MY)
@@ -13,7 +13,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 		.build();
 ```
 
-##### PKI via PKCS12-certificate
+##### PKCS12-file store
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS12)
@@ -21,7 +21,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 		.build();
 ```
 
-##### PKI via PKCS11-implementation  
+##### custom PKCS11 store
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setLibraryPath("/path/to/custom/pkcs11.lib")
@@ -52,22 +52,4 @@ SSLContext sslContext = SSLContextBuilder.create()
 		...
 		.setTrustManagers(TrustManagerHelper.createAllowAllTrustManagers())
 		.build();
-```
-
-##### usage with the Apache HTTP Client
-```java
-KeyStore keyStore = KeyStoreBuilder.create()
-		.setType(KeyStoreType.PKCS12)
-		.setPath("/path/to/cert.p12")
-		.build();
-
-SSLContext sslContext = SSLContextBuilder.create()
-		.setKeyStore(keyStore)
-		.setKeyStorePassword("123456".toCharArray())
-		.build();
-
-HttpClients.custom()
-		.setSslcontext(sslContext)
-		.build()
-		.execute(new HttpGet("https://server"));
 ```
