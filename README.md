@@ -87,6 +87,7 @@ SSLContext sslContext = SSLContextBuilder.create()
             @Override
             public String getSelection()
             {
+            	// returns simply the alias of the first certificate with the key usage 'digital signature' 
                 return KeyStoreHelper.getAliases(keyStore, KeyUsage.DIGITAL_SIGNATURE)[0];
             }
         })
