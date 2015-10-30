@@ -32,6 +32,7 @@ the type must be 'PKCS11', the path to the library of the PKCS #11 implementatio
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS11)
 		.setLibraryPath("/path/to/custom/pkcs11.lib")
+		.setPassword("123456") // optional, password or pin to access the store
 		.build();
 ```
 
