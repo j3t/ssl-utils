@@ -8,7 +8,7 @@ The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java
 To create a KeyStore with the KeyStoreBuilder, you have to provide the type and the provider of the store. The following examples contains some use cases.
 
 ##### To access the Windows certificate store ...
-the type must be 'Windows-MY' and the provider 'SunMSCAPI'. To prevent duplicate aliases, the property 'fixAliases' must be set to true.
+the type must be set to 'Windows-MY' and the provider 'SunMSCAPI'. To prevent duplicate aliases, the property 'fixAliases' must be set to true.
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.WINDOWS_MY)
@@ -18,7 +18,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ```
 
 ##### To access a PKCS #12 store ...
-the type must be 'PKCS12' and the path to the archive file must be configured.
+the type must be set to 'PKCS12' and the path to the archive file must be configured.
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS12)
@@ -27,7 +27,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ```
 
 ##### To access a PKCS #11 store via library ...
-the type must be 'PKCS11', the path to the library of the PKCS #11 implementation must be configured and Java 7 or above should be used.
+the type must be set to 'PKCS11', the path to the library of the PKCS #11 implementation must be configured and Java 7 or above should be used.
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS11)
@@ -37,7 +37,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ```
 
 ##### To access a PKCS #11 store via provider ...
-the type must be 'PKCS11', the name of the provider must be configured and the provider must be already registered.
+the type must be set to 'PKCS11', the name of the provider must be configured and the provider must be already registered.
 ```java
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS11)
