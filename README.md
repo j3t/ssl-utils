@@ -1,5 +1,5 @@
 # ssl-utils
-ssl-utils is a library of utilities to assist with developing PublicKeyInfrastructure functionality in Java applications.
+ssl-utils is a library of utilities to assist with developing security functionality in Java applications.
 
 ## KeyStoreBuilder
 The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore hold
