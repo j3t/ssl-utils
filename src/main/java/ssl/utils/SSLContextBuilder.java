@@ -64,7 +64,7 @@ public class SSLContextBuilder
         trustManagerStrategy = null;
         
         secureRandomGenerator = null;
-        protocol = SslProtocol.TLSv11;
+        protocol = SslProtocol.TLSv12;
     }
 
     /**
