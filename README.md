@@ -39,7 +39,7 @@ To access a PKCS #11 KeyStore via library, the type must be set to 'PKCS11' and 
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS11)
 		.setLibraryPath("/path/to/external/pkcs11.dll")
-		.setPassword("123456") // optional, password or pin to access the store
+		.setPassword("123456".toCharArray()) // optional, password or pin to access the store
 		.build();
 ```
 
@@ -89,3 +89,6 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy(...)
 		.build();
 ```
+
+## Helper
+There are classes that helps you retrieve informations from the key store ([KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/KeyStoreHelper.java) or the certificates (([KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/CertificateHelper.java)).
