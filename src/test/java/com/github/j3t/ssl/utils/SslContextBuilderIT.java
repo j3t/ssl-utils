@@ -2,6 +2,8 @@
 package com.github.j3t.ssl.utils;
 
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,8 +30,6 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.j3t.ssl.utils.KeyStoreBuilder;
-import com.github.j3t.ssl.utils.SSLContextBuilder;
 import com.github.j3t.ssl.utils.types.KeyStoreType;
 
 public class SslContextBuilderIT
@@ -76,7 +76,7 @@ public class SslContextBuilderIT
             Thread.sleep(100);
     }
 
-    private void execute(SSLContext sslContext, URL url) throws IOException
+    private String execute(SSLContext sslContext, URL url) throws IOException
     {
         BufferedReader in = null;
         try
@@ -86,11 +86,7 @@ public class SslContextBuilderIT
             
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             
-            while (in.readLine() != null);
-        }
-        catch (IOException e)
-        {
-            throw e;
+            return in.readLine(); 
         }
         finally
         {
@@ -171,7 +167,7 @@ public class SslContextBuilderIT
                 .setKeyStorePassword("PtUPmi#o".toCharArray())
                 .build();
         
-        execute(sslContext, request.toURL());
+        assertEquals("Ok", execute(sslContext, request.toURL()));
     }
 
 }
