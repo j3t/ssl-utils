@@ -8,7 +8,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URL;
 import java.security.UnrecoverableKeyException;
 import java.util.Random;
 
@@ -76,12 +75,12 @@ public class SslContextBuilderIT
             Thread.sleep(100);
     }
 
-    private String execute(SSLContext sslContext, URL url) throws IOException
+    private String execute(SSLContext sslContext) throws IOException
     {
         BufferedReader in = null;
         try
         {
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) request.toURL().openConnection();
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
             
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -101,7 +100,7 @@ public class SslContextBuilderIT
         SSLContext sslContext = SSLContextBuilder.create()
                 .build();
         
-        execute(sslContext, request.toURL());
+        execute(sslContext);
     }
 
     @Test(expected = SSLHandshakeException.class)
@@ -114,7 +113,7 @@ public class SslContextBuilderIT
                         .build())
                 .build();
         
-        execute(sslContext, request.toURL());
+        execute(sslContext);
     }
 
     @Test(expected = SSLHandshakeException.class)
@@ -132,7 +131,7 @@ public class SslContextBuilderIT
                 .setKeyStorePassword("changeit".toCharArray())
                 .build();
         
-        execute(sslContext, request.toURL());
+        execute(sslContext);
     }
     
     @Test(expected = UnrecoverableKeyException.class)
@@ -149,7 +148,7 @@ public class SslContextBuilderIT
                         .build())
                 .build();
         
-        execute(sslContext, request.toURL());
+        execute(sslContext);
     }
 
     @Test
@@ -167,7 +166,7 @@ public class SslContextBuilderIT
                 .setKeyStorePassword("PtUPmi#o".toCharArray())
                 .build();
         
-        assertEquals("Ok", execute(sslContext, request.toURL()));
+        assertEquals("Ok", execute(sslContext));
     }
 
 }
