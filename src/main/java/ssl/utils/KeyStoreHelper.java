@@ -1,5 +1,5 @@
 
-package ssl.helper;
+package ssl.utils;
 
 
 import java.security.KeyStore;
@@ -13,27 +13,33 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import ssl.KeyUsage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ssl.utils.types.KeyUsage;
 
 /**
- * The {@link KeyStoreHelper} provides operations that often used with a {@link KeyStore}.
+ * Helper class to retrieve data from a key store.
  * 
  * @author j3t
  */
 public class KeyStoreHelper
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreHelper.class);
+    
 
     /**
-     * Returns all aliases from a given {@link KeyStore}.
+     * Returns all aliases from a {@link KeyStore}.
      * 
      * @param keyStore the given {@link KeyStore}
      * 
      * @return {@link String}-Array with aliases (no duplicates) or a an empty array
+     * @throws NullPointerException if certificate is <code>null</code>
      */
     public static String[] getAliases(KeyStore keyStore)
     {
         if (keyStore == null)
-            return new String[0];
+            throw new NullPointerException("keyStore must not be null!");
 
         Set<String> aliases = new HashSet<String>();
 
@@ -52,36 +58,38 @@ public class KeyStoreHelper
     }
 
     /**
-     * Returns all aliases from a given {@link KeyStore} that provides support for one or more key usages.
+     * Returns all aliases from a {@link KeyStore} with specific key usages.
      * 
      * @param keyStore the given {@link KeyStore}
-     * @param keyUsages one or more key usages that must be supported or <code>null</code> which means that the key
-     *            usages are optional
-     * @return
+     * @param keyUsages one or more key usages that must be present
+     * @return array of {@link String}s, or an empty array
+     * @throws NullPointerException if certificate or keyUsages are <code>null</code>
      */
     public static String[] getAliases(KeyStore keyStore, KeyUsage... keyUsages)
     {
+        if (keyUsages == null)
+            throw new NullPointerException("keyUsages must not be null!");
+        
+        if (keyUsages.length == 0)
+            return new String[0];
+        
         List<String> aliases = new LinkedList<String>(Arrays.asList(getAliases(keyStore)));
 
         Iterator<String> it = aliases.iterator();
-        CERT: while (it.hasNext())
+        
+        while (it.hasNext())
         {
             try
             {
                 Certificate[] certChain = keyStore.getCertificateChain(it.next());
 
-                if (keyUsages == null || keyUsages.length == 0)
-                    continue;
-
                 for (KeyUsage keyUsage : keyUsages)
-                    if (CertificateHelper.isKeyUsageSupported(certChain, keyUsage))
-                        continue CERT;
-
-                it.remove();
+                    if (!CertificateHelper.isKeyUsagePresent(certChain, keyUsage))
+                        it.remove();
             }
             catch (KeyStoreException e)
             {
-                e.printStackTrace();
+                LOGGER.warn("getAliases raised exception", e);
             }
         }
 
@@ -89,7 +97,7 @@ public class KeyStoreHelper
     }
 
     /**
-     * Returns a human readable representation of a given keystore.
+     * Returns a human readable representation of a {@link KeyStore}.
      * 
      * @param keyStore the given {@link KeyStore}
      * @return {@link String}, shouldn't be <code>null</code>
@@ -132,7 +140,7 @@ public class KeyStoreHelper
             try
             {
                 Certificate certificate = keyStore.getCertificate(alias);
-                String certToString = CertificateHelper.printCertificate(certificate);
+                String certToString = CertificateHelper.getDetails(certificate);
                 sb.append(certToString);
             }
             catch (KeyStoreException e)
@@ -140,8 +148,7 @@ public class KeyStoreHelper
                 e.printStackTrace();
             }
 
-            if (i < aliases.length - 1)
-                sb.append("\r\n");
+            if (i < aliases.length - 1) sb.append("\r\n");
         }
 
         return sb.toString();

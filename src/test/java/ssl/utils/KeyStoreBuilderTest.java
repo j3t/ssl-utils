@@ -1,4 +1,4 @@
-package ssl.builder;
+package ssl.utils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,19 +7,19 @@ import java.security.KeyStoreException;
 
 import org.junit.Test;
 
-import ssl.builder.KeyStoreBuilder;
+import ssl.utils.KeyStoreBuilder;
 
-public class KeyStoreBuilderIT
+public class KeyStoreBuilderTest
 {
     
     @Test
-    public void testDefaultKeyStore() throws Exception
+    public void keyStoreWithUndefinedTypeShouldReturnDefaultType() throws Exception
     {
         assertEquals(KeyStore.getDefaultType(), KeyStoreBuilder.create().build().getType());
     }
 
     @Test(expected = KeyStoreException.class)
-    public void testCreateKeyStoreWithUnknownType() throws Exception
+    public void buildKeyStoreWithUnknownTypeShouldThrowException() throws Exception
     {
         KeyStoreBuilder.create().setType("UNKNOWN_KEYSTORE_TYPE").build();
     }

@@ -1,9 +1,9 @@
 
-package ssl;
+package ssl.utils.types;
 
 
 /**
- * Constants with the names of the most common key store provider.
+ * Constants with names of key store providers.
  * 
  * @author j3t
  */

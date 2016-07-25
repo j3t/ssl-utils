@@ -1,5 +1,5 @@
 
-package ssl.builder;
+package ssl.utils;
 
 
 import java.io.ByteArrayInputStream;
@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.KeyStoreSpi;
@@ -18,23 +19,31 @@ import java.security.cert.X509Certificate;
 import java.util.Collection;
 import java.util.UUID;
 
-import ssl.KeyStoreProvider;
-import ssl.KeyStoreType;
+import ssl.utils.types.KeyStoreProvider;
+import ssl.utils.types.KeyStoreType;
 
 /**
- * A builder pattern style factory to crate a {@link KeyStore}.
+ * A builder pattern style factory to create a {@link KeyStore}.
  * 
  * @author j3t
  */
 public class KeyStoreBuilder
 {
-    protected String type;
-    protected String provider;
-    protected String path;
-    protected boolean fixAliases;
-    protected String libraryPath;
-    protected char[] password;
-
+    public static KeyStore createWindowsMy() throws GeneralSecurityException, IOException, IllegalAccessException
+    {
+        return create().setType(KeyStoreType.WINDOWS_MY).setProvider(KeyStoreProvider.SUN_MSCAPI).build();
+    }
+    
+    public static KeyStore createWindowsMyFixed() throws GeneralSecurityException, IOException, IllegalAccessException
+    {
+        return create().setType(KeyStoreType.WINDOWS_MY).setProvider(KeyStoreProvider.SUN_MSCAPI).setFixAliases(true).build();
+    }
+    
+    public static KeyStore createWindowsRoot() throws GeneralSecurityException, IOException, IllegalAccessException
+    {
+        return create().setType(KeyStoreType.WINDOWS_ROOT).setProvider(KeyStoreProvider.SUN_MSCAPI).setFixAliases(true).build();
+    }
+    
     /**
      * Creates a new {@link KeyStoreBuilder} instance.
      * 
@@ -44,6 +53,14 @@ public class KeyStoreBuilder
     {
         return new KeyStoreBuilder();
     }
+
+    private String type;
+    private String provider;
+    private String path;
+    private boolean fixAliases;
+    private String libraryPath;
+    private char[] password;
+    private byte[] key;
 
     protected KeyStoreBuilder()
     {
@@ -70,8 +87,8 @@ public class KeyStoreBuilder
     }
 
     /**
-     * Set the type of keystore. Default is {@link KeyStore#getDefaultType()} See Appendix A in the <a href=
-     * "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA"> Java Cryptography Architecture API
+     * Set the type of keystore. Default is {@link KeyStore#getDefaultType()} See Appendix A in the
+     * <a href= "../../../technotes/guides/security/crypto/CryptoSpec.html#AppA"> Java Cryptography Architecture API
      * Specification &amp; Reference </a> for information about standard keystore types.
      * 
      * @param type the type of keystore.
@@ -99,7 +116,21 @@ public class KeyStoreBuilder
     }
 
     /**
-     * Set the path to the keystore file. Default path is <code>null</code>.
+     * Set the key of the keystore. This is an alternative to {@link #setPath(String)} or
+     * {@link #setLibraryPath(String)}.
+     * 
+     * @param key the encoded key as byte array
+     * @return {@link KeyStoreBuilder}
+     */
+    public KeyStoreBuilder setKey(byte[] key)
+    {
+        this.key = key;
+        return this;
+    }
+
+    /**
+     * Set the path to the keystore file. This option is an alternative to {@link #setKey(byte[])} or
+     * {@link #setLibraryPath(String)}.
      * 
      * @param path the path to the keystore file.
      * @return {@link KeyStoreBuilder}
@@ -111,9 +142,10 @@ public class KeyStoreBuilder
     }
 
     /**
-     * Set the path to the PKCS11-library. The default path is <code>null</code> (no special library).
+     * Set the path to the PKCS11-library. This is an alternative to {@link #setPath(String)} or
+     * {@link #setKey(byte[])}.
      * 
-     * @param libraryPath the path to the PKCS11-library (e.g. c:/PROGRA~2/ITSOLU~1/TRUSTW~1.2/32/itp11.dll)
+     * @param libraryPath the path to the PKCS11-library (e.g. /usr/lib/smartcard-reader.lib)
      * @return {@link KeyStoreBuilder}
      */
     public KeyStoreBuilder setLibraryPath(String libraryPath)
@@ -125,8 +157,8 @@ public class KeyStoreBuilder
     /**
      * Set the password to access the key store. Default is <code>null</code> (no password required).
      * 
-     * @param password the password used to check the integrity of the key store, the password used to unlock the
-     *            key store, or null
+     * @param password the password used to check the integrity of the key store, the password used to unlock the key
+     *            store, or null
      * 
      * @return {@link KeyStoreBuilder}
      */
@@ -152,13 +184,12 @@ public class KeyStoreBuilder
      * @throws NoSuchAlgorithmException if the algorithm used to check the integrity of the keystore cannot be found
      * @throws CertificateException if any of the certificates in the keystore could not be loaded
      */
-    public KeyStore build() throws KeyStoreException, NoSuchProviderException, IllegalAccessException, IOException,
-            NoSuchAlgorithmException, CertificateException
+    public KeyStore build() throws GeneralSecurityException, IOException, IllegalAccessException
     {
         KeyStore keyStore = null;
-        
+
         if (libraryPath != null)
-        	setUpPKCS11ProviderWithLibrary();
+            setUpPKCS11ProviderWithLibrary();
 
         if (provider != null)
             keyStore = KeyStore.getInstance(type, provider);
@@ -167,6 +198,8 @@ public class KeyStoreBuilder
 
         if (path != null)
             keyStore.load(new FileInputStream(path), password);
+        else if (key != null)
+            keyStore.load(new ByteArrayInputStream(key), password);
         else
             keyStore.load(null, password);
 
@@ -177,20 +210,17 @@ public class KeyStoreBuilder
     }
 
     private void setUpPKCS11ProviderWithLibrary() throws IOException
-	{
-    	String name = UUID.randomUUID().toString();
-		
-    	registerProvider(name, libraryPath);
-    	
-    	setProvider("SunPKCS11-" + name);
-	}
-
-	private void registerProvider(String name, String library) throws IOException
     {
-        String config = new StringBuilder()
-        		.append("name = ").append(name).append("\n")
-        		.append("library = ").append(library).append("\n")
-        		.toString();
+        String name = UUID.randomUUID().toString();
+
+        registerProvider(name, libraryPath);
+
+        setProvider("SunPKCS11-" + name);
+    }
+
+    private void registerProvider(String name, String library) throws IOException
+    {
+        String config = new StringBuilder().append("name = ").append(name).append("\n").append("library = ").append(library).append("\n").toString();
 
         InputStream inputStream = new ByteArrayInputStream(config.getBytes());
 
@@ -201,22 +231,19 @@ public class KeyStoreBuilder
 
     /**
      * This method eliminates duplicate alias when the keystore provider is MSCAPI and the type is Windows-My. More
-     * information about this problem are described <a
-     * href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6672015">here</a>.
+     * information about this problem are described
+     * <a href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=6672015">here</a>.
      * 
      * @param keyStore {@link KeyStore}
      * @throws IllegalAccessException - if the fix can't processed
      */
     private void fixKeyStoreAliases(KeyStore keyStore) throws IllegalAccessException
     {
-        Field field;
-        KeyStoreSpi keyStoreVeritable;
-
         try
         {
-            field = keyStore.getClass().getDeclaredField("keyStoreSpi");
+            Field field = keyStore.getClass().getDeclaredField("keyStoreSpi");
             field.setAccessible(true);
-            keyStoreVeritable = (KeyStoreSpi) field.get(keyStore);
+            KeyStoreSpi keyStoreVeritable = (KeyStoreSpi) field.get(keyStore);
 
             if ("sun.security.mscapi.KeyStore$MY".equals(keyStoreVeritable.getClass().getName()))
             {
@@ -235,7 +262,7 @@ public class KeyStoreBuilder
                     field.setAccessible(true);
                     certificates = (X509Certificate[]) field.get(entry);
 
-                    hashCode = Integer.toString(certificates[0].hashCode());
+                    hashCode = certificates[0].hashCode() + "";
 
                     field = entry.getClass().getDeclaredField("alias");
                     field.setAccessible(true);

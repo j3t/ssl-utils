@@ -1,8 +1,8 @@
-package ssl.builder;
+package ssl.utils;
 
 import static org.junit.Assert.assertTrue;
-import static ssl.KeyStoreProvider.SUN_MSCAPI;
-import static ssl.KeyStoreType.WINDOWS_MY;
+import static ssl.utils.types.KeyStoreProvider.SUN_MSCAPI;
+import static ssl.utils.types.KeyStoreType.WINDOWS_MY;
 
 import java.security.KeyStore;
 
@@ -10,10 +10,11 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import ssl.helper.KeyStoreHelper;
+import ssl.utils.KeyStoreBuilder;
+import ssl.utils.KeyStoreHelper;
 
-@Ignore("windows-my keystore with certificates required")
-public class KeyStoreBuilderWithWindowsMyIT
+@Ignore("required Windows OS with at least one certificate installed (certmgr.msc->own certificates)")
+public class KeyStoreBuilderWindowsMyTest
 {
     private KeyStoreBuilder builder;
     
@@ -24,7 +25,7 @@ public class KeyStoreBuilderWithWindowsMyIT
     }
     
     @Test
-    public void keyStoreWindowsMyShouldContainsAtLeastOneAlias() throws Exception
+    public void keyStoreShouldContainsAtLeastOneAlias() throws Exception
     {
         KeyStore keyStore = builder
                 .setType(WINDOWS_MY)
@@ -35,7 +36,7 @@ public class KeyStoreBuilderWithWindowsMyIT
     }
     
     @Test
-    public void keyStoreWindowsMyWithFixedAliasesShouldContainsAtLeastThreeAliases() throws Exception
+    public void keyStoreWithFixedAliasesShouldContainsAtLeastOneAlias() throws Exception
     {
         KeyStore keyStore = builder
                 .setType(WINDOWS_MY)
@@ -43,7 +44,6 @@ public class KeyStoreBuilderWithWindowsMyIT
                 .setFixAliases(true)
                 .build();
         
-        assertTrue(KeyStoreHelper.getAliases(keyStore).length >= 3);
+        assertTrue(KeyStoreHelper.getAliases(keyStore).length >= 1);
     }
-    
 }

@@ -1,5 +1,5 @@
 
-package ssl;
+package ssl.utils.types;
 
 
 import java.security.cert.X509Certificate;
