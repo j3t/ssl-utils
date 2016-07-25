@@ -2,7 +2,7 @@
 ssl-utils is a library of utilities to assist with developing security functionality in Java applications. The library is written in Java and requires version 7 or above.
 
 ## KeyStoreBuilder
-The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). To create a KeyStore, you must configure the type and the provider. The following examples shows some use cases.
+The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). To create a KeyStore, you must configure the type and the provider. The following examples shows some use cases.
 
 ### WindowsMy
 To access the Windows KeyStore, the type must be set to 'Windows-MY' and provider to 'SunMSCAPI'.
@@ -44,7 +44,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ```
 
 ## SSLContextBuilder
-The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/builder/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html). To create a SSLContext, you have to configure an KeyStore to authenticate yourself and an TrustStore to define the trusted peers. The following examples shows some use cases.
+The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html). To create a SSLContext, you have to configure an KeyStore to authenticate yourself and an TrustStore to define the trusted peers. The following examples shows some use cases.
 
 ### KeyStore and TrustStore
 ```java
@@ -73,7 +73,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 ```
 
 ### KeyManagerStrategy
-To control the alias selection during the authentication, no matter the alias exists or the certificate is valid, you must configure an [KeyManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/utils/strategy/KeyManagerStrategy.java).
+To control the alias selection during the authentication, no matter the alias exists or the certificate is valid, you must configure an [KeyManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/KeyManagerStrategy.java).
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		...
@@ -82,7 +82,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 ```
 
 ### TrustManagerStrategy
-To control the trustworthiness of certificates independent of the trust manager configured in actual context, you must configure an [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/ssl/utils/strategy/TrustManagerStrategy.java).
+To control the trustworthiness of certificates independent of the trust manager configured in actual context, you must configure an [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java).
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		...
