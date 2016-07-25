@@ -1,3 +1,9 @@
+<p align="right">
+  <a href="https://travis-ci.org/j3t/ssl-utils">
+    <img src="https://travis-ci.org/j3t/ssl-utils.svg?branch=master" alt="Build Status Image"/>
+  </a>
+</p>
+
 # ssl-utils
 ssl-utils is a library of utilities to assist with developing security functionality in Java applications. The library is written in Java and requires version 7 or above.
 
@@ -89,6 +95,3 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy(...)
 		.build();
 ```
-
-## Helper
-There are classes that helps you retrieve informations from the key store ([KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/KeyStoreHelper.java) or the certificates (([KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/CertificateHelper.java)).
