@@ -29,8 +29,8 @@ public class KeyStoreBuilderFileTest
     public static Collection<Object[]> data() throws IllegalAccessException, GeneralSecurityException, IOException
     {
         return Arrays.asList(new Object[][] {
-            { KeyStoreType.JKS, "/client.jks", null }, // password required for private attributes (see KeyStoreBuilderIT)
-            { KeyStoreType.PKCS12, "/client.p12", "PtUPmi#o" } // password required
+            { KeyStoreType.JKS, "/certs/client.jks", null }, // password required for private attributes (see KeyStoreBuilderIT)
+            { KeyStoreType.PKCS12, "/certs/client.p12", "PtUPmi#o" } // password required
         });
     }
     

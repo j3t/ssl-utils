@@ -23,7 +23,7 @@ public class KeyStoreBuilderPKCS12FileTest
     public void setUp() throws Exception
     {
         keyStore = KeyStoreBuilder.create()
-                .setPath(getClass().getResource("/client.p12").getFile())
+                .setPath(getClass().getResource("/certs/client.p12").getFile())
                 .setType(KeyStoreType.PKCS12)
                 .setPassword("PtUPmi#o".toCharArray())
                 .build();

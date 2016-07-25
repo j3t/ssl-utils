@@ -46,9 +46,9 @@ public class SslContextBuilderIT
         server = new Server();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
-        sslContextFactory.setKeyStorePath(SslContextBuilderIT.class.getResource("/server.jks").getFile());
+        sslContextFactory.setKeyStorePath(SslContextBuilderIT.class.getResource("/certs/server.jks").getFile());
         sslContextFactory.setKeyStorePassword("EC\\sEOoY");
-        sslContextFactory.setTrustStorePath(SslContextBuilderIT.class.getResource("/server-trust.jks").getFile());
+        sslContextFactory.setTrustStorePath(SslContextBuilderIT.class.getResource("/certs/server-trust.jks").getFile());
         sslContextFactory.setNeedClientAuth(true);
 
         ServerConnector https = new ServerConnector(
@@ -114,7 +114,7 @@ public class SslContextBuilderIT
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client-trust.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
                         .build())
                 .build();
         
@@ -127,11 +127,11 @@ public class SslContextBuilderIT
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client-trust.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
                         .build())
                 .setKeyStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/unknown-client.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/unknown-client.jks").getFile())
                         .build())
                 .setKeyStorePassword("changeit".toCharArray())
                 .build();
@@ -145,11 +145,11 @@ public class SslContextBuilderIT
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client-trust.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
                         .build())
                 .setKeyStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
                         .build())
                 .build();
         
@@ -162,11 +162,11 @@ public class SslContextBuilderIT
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client-trust.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
                         .build())
                 .setKeyStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/client.jks").getFile())
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
                         .build())
                 .setKeyStorePassword("PtUPmi#o".toCharArray())
                 .build();

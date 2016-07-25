@@ -20,7 +20,7 @@ public class KeyStoreHelperTest
     public void setUp() throws Exception
     {
         keyStore = KeyStoreBuilder.create()
-                .setPath(getClass().getResource("/server.jks").getFile())
+                .setPath(getClass().getResource("/certs/server.jks").getFile())
                 .build();
     }
 
