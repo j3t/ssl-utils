@@ -89,4 +89,3 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy(...)
 		.build();
 ```
-
