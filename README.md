@@ -11,7 +11,7 @@ In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/tech
 
 ![JSSE KeyClasses](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/classes1.jpg)
 
-ssl-utils contains builder and helper to create and access the key material and the SSL context. The library is written in Java and requires version 7 or above.
+ssl-utils contains builder and helper to create/access the key materials and to manipulate the SSL context. The library is written in Java and requires version 7 or above.
 
 ## KeyStoreBuilder
 The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (Key Material). To create a KeyStore, the type and the provider must be configured. The following examples demonstrate some common use cases.
