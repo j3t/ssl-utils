@@ -33,16 +33,20 @@ import com.github.j3t.ssl.utils.types.KeyStoreType;
 
 public class SslContextBuilderIT
 {
-    private static Server server;
     private static URI request;
 
     @BeforeClass
     public static void setUpClass() throws Exception
     {
         int port = new Random().nextInt(1024 * 64 - 1 - 1024) + 1024;
-        
         request = new URI("https", null, "localhost", port, null, null, null);
-        server = new Server();
+        
+        startServer(port);
+    }
+
+    private static void startServer(int port) throws Exception
+    {
+        Server server = new Server();
 
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStorePath(SslContextBuilderIT.class.getResource("/certs/server.jks").getFile());
