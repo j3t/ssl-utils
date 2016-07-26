@@ -120,7 +120,8 @@ public class SslContextBuilderIT
         execute(sslContext);
     }
 
-    @Test(expected = SSLHandshakeException.class)
+    // expected exception: windows = SSLHandshakeException, linux = SocketException
+    @Test(expected = IOException.class)
     public void clientExecuteRequestShouldThrowExceptionWhenClientNotTrustedAndServerTrusted() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
