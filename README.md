@@ -14,7 +14,7 @@ In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/tech
 ssl-utils contains builder and helper to create and access the key material and the SSL context. The library is written in Java and requires version 7 or above.
 
 ## KeyStoreBuilder
-The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (Key Material). To create a KeyStore, you must configure the type and the provider. The following examples demonstrate some common use cases.
+The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (Key Material). To create a KeyStore, the type and the provider must be configured. The following examples demonstrate some common use cases.
 
 ### Create standard Windows key store
 To access the Windows key store, the type must be set to 'Windows-MY' and provider to 'SunMSCAPI'.
@@ -63,7 +63,7 @@ KeyStore keyStore = KeyStoreBuilder.create()
 ```
 
 ## SSLContextBuilder
-The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html). To create a SSLContext, you have to configure an KeyStore to authenticate yourself and an TrustStore to define the trusted peers. The following examples demonstrate some common use cases.
+The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html). To create a SSLContext, the KeyStore - to authenticate yourself - and the TrustStore - to define the trusted peers - must be configured. The following examples demonstrate some common use cases.
 
 ### With given key- and trust-store
 ```java
