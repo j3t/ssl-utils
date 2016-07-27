@@ -7,7 +7,7 @@
 # ssl-utils
 Is a library of utilities to assist with developing security functionality in Java applications.
 
-In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html)), you can see how a secure connection is created in general and which compentent's are involved.
+In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/JSSERefGuide.html)), you can see how a secure connection is created in general and which component's are involved.
 
 ![JSSE KeyClasses](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/classes1.jpg)
 
