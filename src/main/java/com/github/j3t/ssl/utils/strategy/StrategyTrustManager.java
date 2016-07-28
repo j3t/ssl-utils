@@ -16,28 +16,28 @@ import javax.net.ssl.X509TrustManager;
  * @author j3t
  *
  */
-public class FilterTrustManager implements X509TrustManager
+public class StrategyTrustManager implements X509TrustManager
 {
     private X509TrustManager trustManager;
-    private TrustManagerStrategy trustManagerStrategy;
+    private TrustManagerStrategy strategy;
 
-    public FilterTrustManager(X509TrustManager trustManager, TrustManagerStrategy trustManagerStrategy)
+    public StrategyTrustManager(X509TrustManager trustManager, TrustManagerStrategy strategy)
     {
         this.trustManager = trustManager;
-        this.trustManagerStrategy = trustManagerStrategy;
+        this.strategy = strategy;
     }
 
     @Override
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException
     {
-        if (trustManagerStrategy.checkTrusted(chain, authType))
+        if (strategy.checkTrusted(chain, authType))
             trustManager.checkClientTrusted(chain, authType);
     }
 
     @Override
     public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException
     {
-        if (trustManagerStrategy.checkTrusted(chain, authType))
+        if (strategy.checkTrusted(chain, authType))
             trustManager.checkServerTrusted(chain, authType);
     }
 

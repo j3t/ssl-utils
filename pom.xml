@@ -4,6 +4,8 @@
 	<artifactId>ssl-utils</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 
+	<name>ssl-utils</name>
+	<description>Is a library of utilities to assist with developing security functionality in Java applications.</description>
 	<url>https://github.com/j3t/ssl-utils</url>
 
 	<issueManagement>
@@ -11,18 +13,33 @@
 		<system>GitHub Issues</system>
 	</issueManagement>
 
+	<ciManagement>
+		<url>https://travis-ci.org/j3t/ssl-utils</url>
+		<system>Travis CI</system>
+	</ciManagement>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
 	<licenses>
 		<license>
 			<name>Apache License, Version 2.0</name>
-			<url>http://opensource.org/licenses/Apache-2.0</url>
-			<distribution>repo</distribution>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
 		</license>
 	</licenses>
 
 	<scm>
 		<url>https://github.com/j3t/ssl-utils</url>
-		<connection>scm:git:git://github.com/j3t/ssl-utils.git</connection>
-		<developerConnection>scm:git:git@github.com:j3t/ssl-utils.git</developerConnection>
+		<connection>scm:git:git@github.com:git://github.com/j3t/ssl-utils.git</connection>
+		<developerConnection>scm:git:git@github.com:git@github.com:j3t/ssl-utils.git</developerConnection>
 	</scm>
 
 	<developers>
@@ -39,6 +56,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<skipITs>${skipTests}</skipITs>
 		<skipUTs>${skipTests}</skipUTs>
+		<jacoco.version>0.7.7.201606060606</jacoco.version>
 	</properties>
 
 	<build>
@@ -57,7 +75,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.19.1</version>
 				<configuration>
-					<argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
 					<skipTests>${skipUTs}</skipTests>
 				</configuration>
 			</plugin>
@@ -76,16 +93,100 @@
 							<goal>integration-test</goal>
 						</goals>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
 					<execution>
-						<id>verify</id>
+						<id>default-prepare-agent</id>
 						<goals>
-							<goal>verify</goal>
+							<goal>prepare-agent</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>default-report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>default-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>COMPLEXITY</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.66</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>release</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>2.2.1</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar-no-fork</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>2.9.1</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<version>1.6</version>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>

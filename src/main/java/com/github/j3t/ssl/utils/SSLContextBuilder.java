@@ -17,8 +17,8 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
-import com.github.j3t.ssl.utils.strategy.FilterKeyManager;
-import com.github.j3t.ssl.utils.strategy.FilterTrustManager;
+import com.github.j3t.ssl.utils.strategy.StrategyKeyManager;
+import com.github.j3t.ssl.utils.strategy.StrategyTrustManager;
 import com.github.j3t.ssl.utils.strategy.KeyManagerStrategy;
 import com.github.j3t.ssl.utils.strategy.TrustManagerStrategy;
 import com.github.j3t.ssl.utils.types.SslProtocol;
@@ -68,12 +68,11 @@ public class SSLContextBuilder
     }
 
     /**
-     * Set up the trust store. This store contains the public keys of all trusted peers.<br>
+     * Set up the trust store. This store contains all trusted peers.<br>
      * <br>
      * Default: none
      * 
      * @param trustStore the trust store (e.g. {@link KeyStoreBuilder#createWindowsRoot()})
-     * @return 
      * @return this @link SSLContextBuilder}
      */
     public SSLContextBuilder setTrustStore(KeyStore trustStore)
@@ -87,8 +86,7 @@ public class SSLContextBuilder
      * <br>
      * Default: {@link TrustManagerFactory#getDefaultAlgorithm()}
      * 
-     * @param algorithm the algorithm name of the TrustManagerFactory
-     * @return 
+     * @param trustManagerAlgorithm the algorithm name of the TrustManagerFactory
      * @return this @link SSLContextBuilder}
      */
     public SSLContextBuilder setTrustManagerAlgorithm(String trustManagerAlgorithm)
@@ -103,12 +101,13 @@ public class SSLContextBuilder
      * <br>
      * Default: none
      * 
-     * @param aliasSelectionStrategy the alias selection strategy
-     * @return
+     * @param trustManagerStrategy the alias selection strategy
+     * @return this @link SSLContextBuilder}
      */
-    public void setTrustManagerStrategy(TrustManagerStrategy trustManagerStrategy)
+    public SSLContextBuilder setTrustManagerStrategy(TrustManagerStrategy trustManagerStrategy)
     {
         this.trustManagerStrategy = trustManagerStrategy;
+        return this;
     }
 
     /**
@@ -188,7 +187,6 @@ public class SSLContextBuilder
      * Default: {@link SecureRandom}
      * 
      * @param secureRandomGenerator the random number generator
-     * 
      * @return this {@link SSLContextBuilder}
      */
     public SSLContextBuilder setSecureRandomGenerator(SecureRandom secureRandomGenerator)
@@ -258,7 +256,7 @@ public class SSLContextBuilder
             KeyManager keyManager = keyManagers[i];
 
             if (keyManager instanceof X509KeyManager)
-                kms[i] = new FilterKeyManager((X509KeyManager) keyManager, keyManagerStrategy);
+                kms[i] = new StrategyKeyManager((X509KeyManager) keyManager, keyManagerStrategy);
 
             else
                 kms[i] = keyManager;
@@ -275,8 +273,8 @@ public class SSLContextBuilder
         {
             TrustManager trustManager = trustManagers[i];
 
-            if (trustManager instanceof X509KeyManager)
-                tms[i] = new FilterTrustManager((X509TrustManager) trustManager, trustManagerStrategy);
+            if (trustManager instanceof X509TrustManager)
+                tms[i] = new StrategyTrustManager((X509TrustManager) trustManager, trustManagerStrategy);
 
             else
                 tms[i] = trustManager;

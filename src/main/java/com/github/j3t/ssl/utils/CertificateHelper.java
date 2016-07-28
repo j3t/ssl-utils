@@ -6,6 +6,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,9 +19,9 @@ import com.github.j3t.ssl.utils.types.KeyUsage;
  * @author j3t
  *
  */
-public class CertificateHelper
+public final class CertificateHelper
 {
-
+    
     /**
      * Gets the start date of the validity period of the given certificate.
      * 
@@ -68,7 +69,7 @@ public class CertificateHelper
     {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("keyUsage=").append(getKeyUsages(certificate));
+        sb.append("keyUsage=").append(Arrays.toString(getKeyUsages(certificate)));
         sb.append(", expirationDate=").append(getEndDate(certificate));
         sb.append(", issuer=").append(getIssuer(certificate));
 
@@ -126,7 +127,12 @@ public class CertificateHelper
         
         try
         {
-            return castToX509CertificateOrThrowException(certificate).getKeyUsage()[keyUsage.ordinal()];
+            X509Certificate x509Certificate = castToX509CertificateOrThrowException(certificate);
+            
+            if (x509Certificate.getKeyUsage() == null)
+                return false;
+            
+            return x509Certificate.getKeyUsage()[keyUsage.ordinal()];
         }
         catch (IllegalArgumentException e)
         {

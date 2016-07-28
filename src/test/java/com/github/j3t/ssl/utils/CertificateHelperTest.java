@@ -1,10 +1,6 @@
 package com.github.j3t.ssl.utils;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -28,13 +24,15 @@ import com.github.j3t.ssl.utils.types.KeyUsage;
 public class CertificateHelperTest
 {
     private Calendar calendar;
-    private X509Certificate certificate;
+    private X509Certificate x509Certificate;
+    private Certificate certificate;
 
     @Before
     public void setUp() throws Exception
     {
         calendar = Calendar.getInstance();
-        certificate = mock(X509Certificate.class);
+        x509Certificate = mock(X509Certificate.class);
+        certificate = mock(Certificate.class);
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -46,25 +44,25 @@ public class CertificateHelperTest
     @Test
     public void getKeyUsagesShouldReturnAnEmptyResultWhenCertificateHasNotAnyKeyUsages()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, false, false, false, false, false, false});
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, false, false, false, false, false, false});
 
-        assertArrayEquals(new KeyUsage[0], CertificateHelper.getKeyUsages(certificate));
+        assertArrayEquals(new KeyUsage[0], CertificateHelper.getKeyUsages(x509Certificate));
     }
 
     @Test
     public void getKeyUsagesShouldReturnOneKeyUsageWhenCertificateHasOneKeyUsage()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, true, false, false, false, false, false});
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, true, false, false, false, false, false});
 
-        assertArrayEquals(new KeyUsage[] {KeyUsage.DATA_ENCIPHERMENT}, CertificateHelper.getKeyUsages(certificate));
+        assertArrayEquals(new KeyUsage[] {KeyUsage.DATA_ENCIPHERMENT}, CertificateHelper.getKeyUsages(x509Certificate));
     }
 
     @Test
     public void getKeyUsagesShouldReturnTwoKeyUsagesWhenCertificateHasTwoKeyUsages()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {true, false, false, true, false, false, false, false, false});
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {true, false, false, true, false, false, false, false, false});
 
-        assertArrayEquals(new KeyUsage[] {KeyUsage.DIGITAL_SIGNATURE, KeyUsage.DATA_ENCIPHERMENT}, CertificateHelper.getKeyUsages(certificate));
+        assertArrayEquals(new KeyUsage[] {KeyUsage.DIGITAL_SIGNATURE, KeyUsage.DATA_ENCIPHERMENT}, CertificateHelper.getKeyUsages(x509Certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -76,9 +74,15 @@ public class CertificateHelperTest
     @Test
     public void getStartDateShouldReturnDateWhenCertificateIsAnX509Certificate()
     {
-        when(certificate.getNotBefore()).thenReturn(calendar.getTime());
+        when(x509Certificate.getNotBefore()).thenReturn(calendar.getTime());
         
-        assertEquals(calendar.getTime(), CertificateHelper.getStartDate(certificate));
+        assertEquals(calendar.getTime(), CertificateHelper.getStartDate(x509Certificate));
+    }
+    
+    @Test
+    public void getStartDateShouldReturnNullWhenCertificateIsNotAnX509Certificate()
+    {
+        assertNull(CertificateHelper.getStartDate(certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -90,9 +94,15 @@ public class CertificateHelperTest
     @Test
     public void getEndDateShouldReturnDateWhenCertificateIsAnX509Certificate()
     {
-        when(certificate.getNotAfter()).thenReturn(calendar.getTime());
+        when(x509Certificate.getNotAfter()).thenReturn(calendar.getTime());
         
-        assertEquals(calendar.getTime(), CertificateHelper.getEndDate(certificate));
+        assertEquals(calendar.getTime(), CertificateHelper.getEndDate(x509Certificate));
+    }
+    
+    @Test
+    public void getEndDateShouldReturnNullWhenCertificateIsNotAnX509Certificate()
+    {
+        assertNull(CertificateHelper.getEndDate(certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -105,9 +115,9 @@ public class CertificateHelperTest
     public void getIssuerShouldReturnStringWhenCalledWithCertificate()
     {
         X500Principal issuer = new X500Principal("CN=TEST");
-        when(certificate.getIssuerX500Principal()).thenReturn(issuer);
+        when(x509Certificate.getIssuerX500Principal()).thenReturn(issuer);
         
-        assertEquals("CN=TEST", CertificateHelper.getIssuer(certificate));
+        assertEquals("CN=TEST", CertificateHelper.getIssuer(x509Certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -119,11 +129,11 @@ public class CertificateHelperTest
     @Test
     public void getDetailsShouldReturnStringWhenCertificateIsAnX509Certificate()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {true, false, false, true, false, false, false, false, false});
-        when(certificate.getNotAfter()).thenReturn(calendar.getTime());
-        when(certificate.getIssuerX500Principal()).thenReturn(new X500Principal("CN=TEST"));
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {true, false, false, true, false, false, false, false, false});
+        when(x509Certificate.getNotAfter()).thenReturn(calendar.getTime());
+        when(x509Certificate.getIssuerX500Principal()).thenReturn(new X500Principal("CN=TEST"));
         
-        assertNotNull(CertificateHelper.getDetails(certificate));
+        assertNotNull(CertificateHelper.getDetails(x509Certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -135,24 +145,37 @@ public class CertificateHelperTest
     @Test(expected = IllegalArgumentException.class)
     public void isKeyUsagePresentShouldThrowExceptionWhenCalledWithoutKeyUsage()
     {
-        CertificateHelper.isKeyUsagePresent(certificate, null);
+        CertificateHelper.isKeyUsagePresent(x509Certificate, null);
     }
 
     @Test
-    public void isKeyUsagePresentShouldReturnFalseWhenKeyUsageIsNotSupported()
+    public void isKeyUsagePresentShouldReturnFalseWhenKeyUsageIsNotPresent()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, false, false, false, false, false, false});
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, false, false, false, false, false, false});
         
+        assertFalse(CertificateHelper.isKeyUsagePresent(x509Certificate, KeyUsage.DATA_ENCIPHERMENT));
+    }
+    
+    @Test
+    public void isKeyUsagePresentShouldReturnTrueWhenKeyUsageIsPresent()
+    {
+        when(x509Certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, true, false, false, false, false, false});
+        
+        assertTrue(CertificateHelper.isKeyUsagePresent(x509Certificate, KeyUsage.DATA_ENCIPHERMENT));
+    }
+    
+    @Test
+    public void isKeyUsagePresentShouldReturnFalseWhenCertificateInNotAnX509Certificate()
+    {
         assertFalse(CertificateHelper.isKeyUsagePresent(certificate, KeyUsage.DATA_ENCIPHERMENT));
     }
     
     @Test
-    public void isKeyUsagePresentShouldReturnTrueWhenKeyUsageIsSupported()
+    public void isKeyUsagePresentShouldReturnFalseWhenCertificateHasNotAnyKeyUsage()
     {
-        when(certificate.getKeyUsage()).thenReturn(new boolean[] {false, false, false, true, false, false, false, false, false});
-        
-        assertTrue(CertificateHelper.isKeyUsagePresent(certificate, KeyUsage.DATA_ENCIPHERMENT));
+        assertFalse(CertificateHelper.isKeyUsagePresent(x509Certificate, KeyUsage.DATA_ENCIPHERMENT));
     }
+    
     
     @Test(expected = IllegalArgumentException.class)
     public void isValidShouldThrowExceptionWhenCalledWithoutCertificate()
@@ -163,23 +186,23 @@ public class CertificateHelperTest
     @Test
     public void isValidShouldReturnFalseWhenCertificateIsNotValidYet() throws Exception
     {
-        doThrow(new CertificateNotYetValidException()).when(certificate).checkValidity(any(Date.class));
+        doThrow(new CertificateNotYetValidException()).when(x509Certificate).checkValidity(any(Date.class));
         
-        assertFalse(CertificateHelper.isValid(certificate));
+        assertFalse(CertificateHelper.isValid(x509Certificate));
     }
     
     @Test
     public void isValidShouldReturnFalseWhenCertificateIsExpired() throws Exception
     {
-        doThrow(new CertificateExpiredException()).when(certificate).checkValidity(any(Date.class));
+        doThrow(new CertificateExpiredException()).when(x509Certificate).checkValidity(any(Date.class));
         
-        assertFalse(CertificateHelper.isValid(certificate));
+        assertFalse(CertificateHelper.isValid(x509Certificate));
     }
     
     @Test
     public void isValidShouldReturnTrueWhenCertificateIsValid()
     {
-        assertTrue(CertificateHelper.isValid(certificate));
+        assertTrue(CertificateHelper.isValid(x509Certificate));
     }
     
     @Test(expected = IllegalArgumentException.class)
@@ -191,23 +214,24 @@ public class CertificateHelperTest
     @Test(expected = IllegalArgumentException.class)
     public void isValidAtShouldThrowExceptionWhenTimeIsNull()
     {
-        CertificateHelper.isValidAt(certificate, null);
+        CertificateHelper.isValidAt(x509Certificate, null);
     }
 
     @Test
     public void isValidAtShouldReturnTrueWhenCalledWithValidCertificate()
     {
-        when(certificate.getNotAfter()).thenReturn(calendar.getTime());
+        when(x509Certificate.getNotAfter()).thenReturn(calendar.getTime());
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         
-        assertTrue(CertificateHelper.isValidAt(certificate, calendar.getTime()));
+        assertTrue(CertificateHelper.isValidAt(x509Certificate, calendar.getTime()));
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void isValidAtShouldThrowExceptionCalledWithoutTime()
     {
-        when(certificate.getNotAfter()).thenReturn(calendar.getTime());
+        when(x509Certificate.getNotAfter()).thenReturn(calendar.getTime());
         
-        CertificateHelper.isValidAt(certificate, null);
+        CertificateHelper.isValidAt(x509Certificate, null);
     }
+    
 }

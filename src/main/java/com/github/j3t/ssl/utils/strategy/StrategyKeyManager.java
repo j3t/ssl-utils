@@ -22,29 +22,29 @@ import org.slf4j.LoggerFactory;
  * @author j3t
  *
  */
-public class FilterKeyManager implements X509KeyManager
+public class StrategyKeyManager implements X509KeyManager
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FilterKeyManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StrategyKeyManager.class);
 
     private X509KeyManager keyManager;
-    private KeyManagerStrategy chooseAliasListener;
+    private KeyManagerStrategy strategy;
 
     /**
-     * Creates an instance of {@link FilterKeyManager}.
+     * Creates an instance of {@link StrategyKeyManager}.
      * 
      * @param keyManager the underlying {@link X509KeyManager}
-     * @param chooseAliasListener the {@link KeyManagerStrategy}
+     * @param strategy the {@link KeyManagerStrategy}
      */
-    public FilterKeyManager(X509KeyManager keyManager, KeyManagerStrategy chooseAliasListener)
+    public StrategyKeyManager(X509KeyManager keyManager, KeyManagerStrategy strategy)
     {
         this.keyManager = keyManager;
-        this.chooseAliasListener = chooseAliasListener;
+        this.strategy = strategy;
     }
 
     @Override
     public String chooseClientAlias(String[] keyTypes, Principal[] issuers, Socket socket)
     {
-        String alias = chooseAliasListener.chooseAlias();
+        String alias = strategy.chooseAlias();
 
         if (alias == null)
             alias = keyManager.chooseClientAlias(keyTypes, issuers, socket);
@@ -57,7 +57,7 @@ public class FilterKeyManager implements X509KeyManager
     @Override
     public String chooseServerAlias(String keyType, Principal[] issuers, Socket socket)
     {
-        String alias = chooseAliasListener.chooseAlias();
+        String alias = strategy.chooseAlias();
 
         if (alias == null)
             alias = keyManager.chooseServerAlias(keyType, issuers, socket);
@@ -68,9 +68,9 @@ public class FilterKeyManager implements X509KeyManager
     }
 
     @Override
-    public X509Certificate[] getCertificateChain(String keyType)
+    public X509Certificate[] getCertificateChain(String alias)
     {
-        return keyManager.getCertificateChain(keyType);
+        return keyManager.getCertificateChain(alias);
     }
 
     @Override
@@ -80,9 +80,9 @@ public class FilterKeyManager implements X509KeyManager
     }
 
     @Override
-    public PrivateKey getPrivateKey(String keyType)
+    public PrivateKey getPrivateKey(String alias)
     {
-        return keyManager.getPrivateKey(keyType);
+        return keyManager.getPrivateKey(alias);
     }
 
     @Override

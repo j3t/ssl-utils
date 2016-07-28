@@ -5,16 +5,11 @@ package com.github.j3t.ssl.utils;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.cert.Certificate;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
@@ -23,23 +18,21 @@ import com.github.j3t.ssl.utils.types.KeyUsage;
  * 
  * @author j3t
  */
-public class KeyStoreHelper
+public final class KeyStoreHelper
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KeyStoreHelper.class);
     
-
     /**
      * Returns all aliases from a {@link KeyStore}.
      * 
      * @param keyStore the given {@link KeyStore}
      * 
      * @return {@link String}-Array with aliases (no duplicates) or a an empty array
-     * @throws NullPointerException if certificate is <code>null</code>
+     * @throws IllegalArgumentException if keyStore is <code>null</code>
+     * @throws IllegalStateException if the KeyStore is not been initialized
      */
     public static String[] getAliases(KeyStore keyStore)
     {
-        if (keyStore == null)
-            throw new NullPointerException("keyStore must not be null!");
+        checkKeyStore(keyStore);
 
         Set<String> aliases = new HashSet<String>();
 
@@ -51,7 +44,7 @@ public class KeyStoreHelper
         }
         catch (KeyStoreException e)
         {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
 
         return aliases.toArray(new String[aliases.size()]);
@@ -63,37 +56,41 @@ public class KeyStoreHelper
      * @param keyStore the given {@link KeyStore}
      * @param keyUsages one or more key usages that must be present
      * @return array of {@link String}s, or an empty array
-     * @throws NullPointerException if certificate or keyUsages are <code>null</code>
+     * @throws IllegalArgumentException if keyStore or keyUsages are <code>null</code>
+     * @throws IllegalStateException if the KeyStore is not been initialized
      */
     public static String[] getAliases(KeyStore keyStore, KeyUsage... keyUsages)
     {
+        checkKeyStore(keyStore);
+        
         if (keyUsages == null)
-            throw new NullPointerException("keyUsages must not be null!");
+            throw new IllegalArgumentException("keyUsages must not be null!");
         
         if (keyUsages.length == 0)
             return new String[0];
         
-        List<String> aliases = new LinkedList<String>(Arrays.asList(getAliases(keyStore)));
-
-        Iterator<String> it = aliases.iterator();
-        
-        while (it.hasNext())
+        try
         {
-            try
+            List<String> aliases = new LinkedList<String>();
+            Enumeration<String> en = keyStore.aliases();
+            
+            while (en.hasMoreElements())
             {
-                Certificate[] certChain = keyStore.getCertificateChain(it.next());
-
+                String alias = en.nextElement();
+                aliases.add(alias);
+                Certificate[] certChain = keyStore.getCertificateChain(alias);
+                
                 for (KeyUsage keyUsage : keyUsages)
                     if (!CertificateHelper.isKeyUsagePresent(certChain, keyUsage))
-                        it.remove();
+                        aliases.remove(alias);
             }
-            catch (KeyStoreException e)
-            {
-                LOGGER.warn("getAliases raised exception", e);
-            }
+            
+            return aliases.toArray(new String[aliases.size()]);
         }
-
-        return aliases.toArray(new String[aliases.size()]);
+        catch (KeyStoreException e)
+        {
+            throw new IllegalStateException(e);
+        }
     }
 
     /**
@@ -101,39 +98,42 @@ public class KeyStoreHelper
      * 
      * @param keyStore the given {@link KeyStore}
      * @return {@link String}, shouldn't be <code>null</code>
+     * @throws IllegalArgumentException if keyStore is <code>null</code>
+     * @throws IllegalStateException if the KeyStore is not been initialized
      */
     public static String toString(KeyStore keyStore)
     {
-        StringBuilder sb = new StringBuilder();
-
         String[] aliases = getAliases(keyStore);
 
-        if (aliases == null || aliases.length == 0)
-        {
-            sb.append("keyStore is empty");
-        }
-        else
-        {
-            sb.append("keyStore contains ").append(aliases.length).append(" aliase(s)").append("\r\n");
-            sb.append(toStringByAlias(keyStore, aliases));
-        }
-
+        if (aliases.length == 0)
+            return "keyStore is empty";
+        
+        StringBuilder sb = new StringBuilder();
+        sb.append("keyStore contains ").append(aliases.length).append(" aliase(s)").append("\r\n");
+        sb.append(toStringByAlias(keyStore, aliases));
         return sb.toString();
     }
 
     /**
-     * Returns a human readable representation of the aliases from a given keystore.
+     * Returns a human readable representation of the aliases from a given key store.
      * 
      * @param keyStore the given {@link KeyStore}
      * @param aliases the given aliases
      * @return {@link String}, shouldn't be <code>null</code>
+     * @throws IllegalArgumentException if keyStore is <code>null</code>
+     * @throws IllegalStateException if the KeyStore is not been initialized
      */
     public static String toStringByAlias(KeyStore keyStore, String... aliases)
     {
+        checkKeyStore(keyStore);
+        
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < aliases.length; i++)
         {
+            if (i > 0)
+                sb.append("\r\n");
+            
             String alias = aliases[i];
 
             sb.append("\t").append(i + 1).append(". ").append(alias).append(" - ");
@@ -145,13 +145,23 @@ public class KeyStoreHelper
             }
             catch (KeyStoreException e)
             {
-                e.printStackTrace();
+                throw new IllegalStateException(e);
             }
-
-            if (i < aliases.length - 1) sb.append("\r\n");
         }
 
         return sb.toString();
+    }
+
+    /**
+     * Checks that the given key store isn't <code>null</code>.
+     * 
+     * @param keyStore the given {@link KeyStore}
+     * @throws IllegalArgumentException if the key store <code>null</code>
+     */
+    public static void checkKeyStore(KeyStore keyStore)
+    {
+        if (keyStore == null)
+            throw new IllegalArgumentException("keyStore must not be null!");
     }
 
 }
