@@ -16,7 +16,11 @@ import com.github.j3t.ssl.utils.KeyStoreBuilder;
 import com.github.j3t.ssl.utils.KeyStoreHelper;
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
-public class KeyStoreBuilderKeyTest
+/**
+ * Test key store building with key byte array.
+ * @author j3t
+ */
+public class KeyStoreBuilderKeyByteArrayTest
 {
     private KeyStore keyStore;
     private byte[] key;

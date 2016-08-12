@@ -2,7 +2,7 @@
 package com.github.j3t.ssl.utils;
 
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.net.URI;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
@@ -25,12 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.http.HttpStatus;
-import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.ssl.SslSocketConnector;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -54,20 +53,16 @@ public class SslContextBuilderIT
 
     private static void startServer(int port) throws Exception
     {
-        Server server = new Server();
-
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStorePath(SslContextBuilderIT.class.getResource("/certs/server.jks").getFile());
         sslContextFactory.setKeyStorePassword("EC\\sEOoY");
-        sslContextFactory.setTrustStorePath(SslContextBuilderIT.class.getResource("/certs/server-trust.jks").getFile());
+        sslContextFactory.setTrustStore(SslContextBuilderIT.class.getResource("/certs/server-trust.jks").getFile());
         sslContextFactory.setNeedClientAuth(true);
 
-        ServerConnector https = new ServerConnector(
-                server,
-                new SslConnectionFactory(sslContextFactory, "http/1.1"),
-                new HttpConnectionFactory());
+        SslSocketConnector https = new SslSocketConnector(sslContextFactory);
         https.setPort(port);
         
+        Server server = new Server();
         server.addConnector(https);
         server.setStopAtShutdown(true);
         server.setHandler(new AbstractHandler()
@@ -115,7 +110,7 @@ public class SslContextBuilderIT
         execute(sslContext);
     }
 
-    @Test(expected = SSLHandshakeException.class)
+    @Test(expected = SocketException.class)
     public void clientExecuteRequestShouldThrowExceptionWhenClientUnknownAndServerTrusted() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()

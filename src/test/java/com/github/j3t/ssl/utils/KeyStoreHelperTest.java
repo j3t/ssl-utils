@@ -133,7 +133,7 @@ public class KeyStoreHelperTest
     }
     
     @Test
-    public void toStringByAliasShouldReturnStringContainsNewLineWhenKeyStoreHasMultipleKeys() throws Exception
+    public void givenKeyStoreWithMultipleKeys_whenToStringByAliasWithTwoAliasesExecuted_thenResultShouldContainsNewLine() throws Exception
     {
         assertTrue(KeyStoreHelper.toStringByAlias(multiKeyStore, "client", "server").contains("\r\n"));
     }

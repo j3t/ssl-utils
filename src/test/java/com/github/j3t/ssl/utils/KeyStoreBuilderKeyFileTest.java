@@ -20,8 +20,13 @@ import com.github.j3t.ssl.utils.KeyStoreHelper;
 import com.github.j3t.ssl.utils.types.KeyStoreType;
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
+/**
+ * Test key store building with key file.
+ *
+ * @author j3t
+ */
 @RunWith(Parameterized.class)
-public class KeyStoreBuilderFileTest
+public class KeyStoreBuilderKeyFileTest
 {
     private KeyStore keyStore;
 
@@ -34,7 +39,7 @@ public class KeyStoreBuilderFileTest
         });
     }
     
-    public KeyStoreBuilderFileTest(String type, String path, String pwd) throws IllegalAccessException, GeneralSecurityException, IOException
+    public KeyStoreBuilderKeyFileTest(String type, String path, String pwd) throws IllegalAccessException, GeneralSecurityException, IOException
     {
         keyStore = KeyStoreBuilder.create()
                 .setPath(getClass().getResource(path).getFile())

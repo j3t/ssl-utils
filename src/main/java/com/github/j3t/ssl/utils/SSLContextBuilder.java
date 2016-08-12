@@ -17,9 +17,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
 import javax.net.ssl.X509TrustManager;
 
+import com.github.j3t.ssl.utils.strategy.KeyManagerStrategy;
 import com.github.j3t.ssl.utils.strategy.StrategyKeyManager;
 import com.github.j3t.ssl.utils.strategy.StrategyTrustManager;
-import com.github.j3t.ssl.utils.strategy.KeyManagerStrategy;
 import com.github.j3t.ssl.utils.strategy.TrustManagerStrategy;
 import com.github.j3t.ssl.utils.types.SslProtocol;
 
@@ -64,7 +64,7 @@ public class SSLContextBuilder
         trustManagerStrategy = null;
         
         secureRandomGenerator = null;
-        protocol = SslProtocol.TLSv12;
+        protocol = null;
     }
 
     /**
@@ -170,7 +170,7 @@ public class SSLContextBuilder
     /**
      * Set up the protocol.<br>
      * <br>
-     * Default: TLSv1.1
+     * Default: Java 8 TLSv1.2, Java 7 TLSv1.1 otherwise TLSv1.0
      * 
      * @param protocol the protocol (e.g. SSLv3, TLSv1.1, ...)
      * @return this @link SSLContextBuilder}
@@ -204,10 +204,24 @@ public class SSLContextBuilder
      */
     public SSLContext build() throws GeneralSecurityException, IOException
     {
-        SSLContext ctx = SSLContext.getInstance(protocol);
+        SSLContext ctx = SSLContext.getInstance(createProtocol());
         ctx.init(createKeyManagers(), createTrustManagers(), createSecureRandomGenerator());
 
         return ctx;
+    }
+
+    protected String createProtocol()
+    {
+        if (protocol != null)
+            return protocol;
+        
+        if (EnvironmentHelper.isJava8OrHigher())
+            return SslProtocol.TLSv12;
+        
+        if (EnvironmentHelper.isJava7OrHigher())
+            return SslProtocol.TLSv11;
+        
+        return SslProtocol.TLSv10;
     }
 
     protected KeyManager[] createKeyManagers() throws GeneralSecurityException

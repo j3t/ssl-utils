@@ -1,4 +1,7 @@
 language: java
+os:
+  - linux
+  - osx
 script: "mvn integration-test"
 jdk:
   - oraclejdk8
