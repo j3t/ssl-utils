@@ -5,17 +5,12 @@ matrix:
       sudo: required
       dist: trusty
       group: edge
-      jdk:
-        - openjdk6
-        - openjdk7
-        - oraclejdk7
-        - oraclejdk8
-        - oraclejdk9
     - os: osx
       osx_image: xcode8
-      jdk:
-        - openjdk6
-        - openjdk7
-        - oraclejdk7
-        - oraclejdk8
+      
+jdk:
+  - openjdk6
+  - openjdk7
+  - oraclejdk7
+  - oraclejdk8
 script: "mvn integration-test"
