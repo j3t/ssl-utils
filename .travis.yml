@@ -2,8 +2,10 @@ language: java
 os:
   - linux
   - osx
+osx_image: xcode8
 script: "mvn integration-test"
 jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
+  - openjdk6
