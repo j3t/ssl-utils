@@ -6,17 +6,22 @@ matrix:
       script: mvn integration-test
     - os: linux
       jdk: openjdk7
+      language: java
       script: mvn integration-test
     - os: linux
       jdk: oraclejdk7
+      language: java
       script: mvn integration-test
     - os: linux
       jdk: oraclejdk8
+      language: java
       script: mvn integration-test
     - os: osx
       jdk: oraclejdk7
+      language: java
       script: mvn integration-test
     - os: osx
       osx_image: xcode8
       jdk: oraclejdk8
+      language: java
       script: mvn integration-test
