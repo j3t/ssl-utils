@@ -1,25 +1,18 @@
+language: java
+
 matrix:
   include:
     - os: linux
-      language: java
       jdk: openjdk6
-      script: mvn integration-test
     - os: linux
-      language: java
       jdk: openjdk7
-      script: mvn integration-test
     - os: linux
-      language: java
       jdk: oraclejdk7
-      script: mvn integration-test
     - os: linux
-      language: java
       jdk: oraclejdk8
-      script: mvn integration-test
     - os: osx
-      language: java
-      script: mvn integration-test
+      osx_image: xcode7.3
     - os: osx
       osx_image: xcode8
-      language: java
-      script: mvn integration-test
+
+script: mvn integration-test
