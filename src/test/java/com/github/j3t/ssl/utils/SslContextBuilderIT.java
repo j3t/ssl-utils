@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.SocketException;
 import java.net.URI;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
@@ -110,7 +109,8 @@ public class SslContextBuilderIT
         execute(sslContext);
     }
 
-    @Test(expected = SocketException.class)
+    // expected exception: windows = SocketException, osx/linux = SSLHandshakeException
+    @Test(expected = IOException.class)
     public void clientExecuteRequestShouldThrowExceptionWhenClientUnknownAndServerTrusted() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
@@ -123,7 +123,7 @@ public class SslContextBuilderIT
         execute(sslContext);
     }
 
-    // expected exception: windows = SSLHandshakeException, linux = SocketException
+    // expected exception: windows = SSLHandshakeException, osx/linux = SocketException
     @Test(expected = IOException.class)
     public void clientExecuteRequestShouldThrowExceptionWhenClientNotTrustedAndServerTrusted() throws Exception
     {
