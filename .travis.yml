@@ -3,22 +3,16 @@ language: java
 matrix:
   include:
     - os: linux
-      jdk: openjdk6
-    - os: linux
-      jdk: openjdk7
-    - os: linux
-      jdk: oraclejdk7
-    - os: linux
-      jdk: oraclejdk8
+      jdk:
+        - openjdk6
+        - openjdk7
+        - openjdk7
+        - oraclejdk7
+        - oraclejdk8
+      script: mvn integration-test
     - os: osx
-      osx_image: xcode6.4
-    - os: osx
-      osx_image: xcode7
-    - os: osx
-      osx_image: xcode7.1
-    - os: osx
-      osx_image: xcode7.2
-    - os: osx
-      osx_image: xcode7.3
-
-script: mvn integration-test
+      script:
+        - "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-macosx-x64.dmg"
+        - hdiutil mount jdk-8u102-macosx-x64.dmg
+        - sudo installer -pkg /Volumes/JDK\ 8\ Update\ 102/JDK\ 8\ Update\ 102.pkg -target LocalSystem
+        - mvn integration-test
