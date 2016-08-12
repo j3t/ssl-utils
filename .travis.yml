@@ -14,18 +14,20 @@ matrix:
       osx_image: xcode7.3
       env:
         - ORACLE_REPO=otn
+        - JDK_VERSION=7
         - JDK_UPDATE=80
         - JDK_BUILD=b15
     - os: osx
       osx_image: xcode7.3
       env:
         - ORACLE_REPO=otn-pub
+        - JDK_VERSION=8
         - JDK_UPDATE=102
         - JDK_BUILD=b14
 
 before_install:
-  - "if [[ -n $JDK_UPDATE ]]; then wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/$ORACLE_REPO/java/jdk/8u$JDK_UPDATE-$JDK_BUILD/jdk-8u$JDK_UPDATE-macosx-x64.dmg; fi"
+  - "if [[ -n $JDK_UPDATE ]]; then wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/$ORACLE_REPO/java/jdk/$JDK_VERSIONu$JDK_UPDATE-$JDK_BUILD/jdk-$JDK_VERSIONu$JDK_UPDATE-macosx-x64.dmg; fi"
   - if [[ -n $JDK_UPDATE ]]; then hdiutil mount jdk-8u$JDK_UPDATE-macosx-x64.dmg; fi
-  - if [[ -n $JDK_UPDATE ]]; then sudo installer -pkg /Volumes/JDK\ 8\ Update\ $JDK_UPDATE/JDK\ 8\ Update\ $JDK_UPDATE.pkg -target LocalSystem; fi
+  - if [[ -n $JDK_UPDATE ]]; then sudo installer -pkg /Volumes/JDK\ $JDK_VERSION\ Update\ $JDK_UPDATE/JDK\ $JDK_VERSION\ Update\ $JDK_UPDATE.pkg -target LocalSystem; fi
 
 script: mvn integration-test
