@@ -19,7 +19,7 @@ matrix:
         - JDK_BUILD=b14
 
 before_install:
-  - if [[ -n "$JDK_UPDATE" ]]; then wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u$JDK_UPDATE-$JDK_BUILD/jdk-8u$JDK_UPDATE-macosx-x64.dmg; fi
+  - if [[ -n "$JDK_UPDATE" ]]; then wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/otn-pub/java/jdk/8u$JDK_UPDATE-$JDK_BUILD/jdk-8u$JDK_UPDATE-macosx-x64.dmg; fi
   - if [[ -n "$JDK_UPDATE" ]]; then hdiutil mount "jdk-8u$JDK_UPDATE-macosx-x64.dmg"; fi
   - if [[ -n "$JDK_UPDATE" ]]; then sudo installer -pkg "/Volumes/JDK8Update$JDK_UPDATE/JDK8Update$JDK_UPDATE.pkg" -target LocalSystem; fi
 
