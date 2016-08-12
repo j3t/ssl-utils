@@ -3,16 +3,24 @@ language: java
 matrix:
   include:
     - os: linux
-      jdk:
-        - openjdk6
-        - openjdk7
-        - openjdk7
-        - oraclejdk7
-        - oraclejdk8
-      script: mvn integration-test
+      jdk: openjdk6
+    - os: linux
+      jdk: openjdk7
+    - os: linux
+      jdk: oraclejdk7
+    - os: linux
+      jdk: oraclejdk8
+    - os: linux
+      jdk: oraclejdk9
     - os: osx
-      script:
-        - "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/otn-pub/java/jdk/8u102-b14/jdk-8u102-macosx-x64.dmg"
-        - hdiutil mount jdk-8u102-macosx-x64.dmg
-        - sudo installer -pkg /Volumes/JDK\ 8\ Update\ 102/JDK\ 8\ Update\ 102.pkg -target LocalSystem
-        - mvn integration-test
+      osx_image: xcode7.3
+      env:
+        - JDK_UPDATE=102
+        - JDK_BUILD=b14
+
+before_install:
+  - if [[ -n "$JDK_UPDATE" ]]; then "wget --no-cookies --no-check-certificate --header \"Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie\" http://download.oracle.com/otn-pub/java/jdk/8u$JDK_UPDATE-$JDK_BUILD/jdk-8u$JDK_UPDATE-macosx-x64.dmg"; fi
+  - if [[ -n "$JDK_UPDATE" ]]; then hdiutil mount jdk-8u$JDK_UPDATE-macosx-x64.dmg; fi
+  - if [[ -n "$JDK_UPDATE" ]]; then sudo installer -pkg /Volumes/JDK\ 8\ Update\ $JDK_UPDATE/JDK\ 8\ Update\ $JDK_UPDATE.pkg -target LocalSystem; fi
+
+script: mvn integration-test
