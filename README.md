@@ -1,8 +1,6 @@
-<p align="right">
-  <a href="https://travis-ci.org/j3t/ssl-utils">
-    <img src="https://travis-ci.org/j3t/ssl-utils.svg?branch=master" alt="Build Status Image"/>
-  </a>
-</p>
+[![Build Status](https://travis-ci.org/j3t/ssl-utils.svg?branch=master)](https://travis-ci.org/j3t/ssl-utils)
+[![Download Maven Central](https://img.shields.io/badge/maven--central-v1.0.0-blue.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.j3t%22%20AND%20a%3A%22ssl-utils%22)
+[![Apache License 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/j3t/ssl-utils/blob/master/LICENSE)
 
 # ssl-utils
 Is a library of utilities to assist with developing security functionality in Java applications.
@@ -12,16 +10,6 @@ In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/tech
 ![JSSE KeyClasses](http://docs.oracle.com/javase/7/docs/technotes/guides/security/jsse/classes1.jpg)
 
 ssl-utils contains builder and helper to create/access the key materials and to manipulate the SSL context. The library is written in Java and requires version 6 or higher.
-
-## Maven
-The artifacts are available in central. The coordinates are the following:
-```xml
-<dependency>
-    <groupId>com.github.j3t</groupId>
-    <artifactId>ssl-utils</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
 
 ## KeyStoreBuilder
 The [KeyStoreBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (Key Material). To create a KeyStore, the type and the provider must be configured. The following examples demonstrate some common use cases.
