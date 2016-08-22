@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.SocketException;
 import java.net.URI;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.X509Certificate;
@@ -20,6 +21,7 @@ import java.util.Random;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLHandshakeException;
+import java.security.cert.CertificateException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,6 +39,12 @@ import com.github.j3t.ssl.utils.strategy.KeyManagerStrategy;
 import com.github.j3t.ssl.utils.strategy.TrustManagerStrategy;
 import com.github.j3t.ssl.utils.types.KeyStoreType;
 
+/**
+ * Integration test with a local server and client. The server is started with his own key and trust store. Each test
+ * creates a different client configuration, sends a request to the server and checked the result.
+ *
+ * @author j3t
+ */
 public class SslContextBuilderIT
 {
     private static URI request;
@@ -46,7 +54,7 @@ public class SslContextBuilderIT
     {
         int port = new Random().nextInt(1024 * 64 - 1 - 1024) + 1024;
         request = new URI("https", null, "localhost", port, null, null, null);
-        
+
         startServer(port);
     }
 
@@ -60,15 +68,16 @@ public class SslContextBuilderIT
 
         SslSocketConnector https = new SslSocketConnector(sslContextFactory);
         https.setPort(port);
-        
+
         Server server = new Server();
         server.addConnector(https);
         server.setStopAtShutdown(true);
         server.setHandler(new AbstractHandler()
             {
-                
+
                 @Override
-                public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException
+                public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+                        throws IOException, ServletException
                 {
                     response.setStatus(HttpStatus.OK_200);
                     response.getWriter().print("Ok");
@@ -76,7 +85,7 @@ public class SslContextBuilderIT
                 }
             });
         server.start();
-        
+
         while (server.isStarting())
             Thread.sleep(100);
     }
@@ -88,30 +97,41 @@ public class SslContextBuilderIT
         {
             HttpsURLConnection conn = (HttpsURLConnection) request.toURL().openConnection();
             conn.setSSLSocketFactory(sslContext.getSocketFactory());
-            
+
             in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            
-            return in.readLine(); 
+
+            return in.readLine();
         }
         finally
         {
-            if (in != null)
-                in.close();
+            if (in != null) in.close();
         }
     }
 
-    @Test(expected = SSLHandshakeException.class)
-    public void clientExecuteRequestShouldThrowExceptionWhenClientUnknownAndServerNotTrusted() throws Exception
+    @Test(expected = UnrecoverableKeyException.class)
+    public void givenClientExecuteRequest_whenClientKeyStorePasswordIsNotProvided_thenExceptionShouldBeThrown() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
+                .setKeyStore(KeyStoreBuilder.create()
+                        .setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
+                        .build())
                 .build();
-        
+
+        execute(sslContext);
+    }
+
+    @Test(expected = SSLHandshakeException.class)
+    public void givenClientExecuteRequest_whenClientIsNotTrustedByServerAndServerIsNotTrustedByClient_thenExceptionShouldBeThrown() throws Exception
+    {
+        SSLContext sslContext = SSLContextBuilder.create().build();
+
         execute(sslContext);
     }
 
     // expected exception: windows = SocketException, osx/linux = SSLHandshakeException
     @Test(expected = IOException.class)
-    public void clientExecuteRequestShouldThrowExceptionWhenClientUnknownAndServerTrusted() throws Exception
+    public void givenClientExecuteRequest_whenClientKeyIsNotProvidedAndServerIsTrustedByClient_thenExceptionShouldBeThrown() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
@@ -119,13 +139,13 @@ public class SslContextBuilderIT
                         .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
                         .build())
                 .build();
-        
+
         execute(sslContext);
     }
 
     // expected exception: windows = SSLHandshakeException, osx/linux = SocketException
     @Test(expected = IOException.class)
-    public void clientExecuteRequestShouldThrowExceptionWhenClientNotTrustedAndServerTrusted() throws Exception
+    public void givenClientExecuteRequest_whenClientIsNotTrustedByServerAndServerIsTrustedByClient_thenExceptionShouldBeThrown() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
@@ -138,29 +158,12 @@ public class SslContextBuilderIT
                         .build())
                 .setKeyStorePassword("changeit".toCharArray())
                 .build();
-        
-        execute(sslContext);
-    }
-    
-    @Test(expected = UnrecoverableKeyException.class)
-    public void clientExecuteRequestShouldThrowExceptionWhenKeyStorePasswordIsNotProvided() throws Exception
-    {
-        SSLContext sslContext = SSLContextBuilder.create()
-                .setTrustStore(KeyStoreBuilder.create()
-                        .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
-                        .build())
-                .setKeyStore(KeyStoreBuilder.create()
-                        .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
-                        .build())
-                .build();
-        
+
         execute(sslContext);
     }
 
     @Test
-    public void clientExecuteRequestShouldNotThrowAnyExceptionWhenClientTrustedAndServerTrusted() throws Exception
+    public void givenClientExecuteRequest_whenClientIsTrustedByServerAndServerIsTrustedByClient_thenRequestShouldBeAnswered() throws Exception
     {
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
@@ -173,16 +176,16 @@ public class SslContextBuilderIT
                         .build())
                 .setKeyStorePassword("PtUPmi#o".toCharArray())
                 .build();
-        
+
         assertEquals("Ok", execute(sslContext));
     }
 
     @Test
-    public void clientExecuteRequestShouldRequestTrustManagerStrategyWhenServerTrustedClient() throws Exception
+    public void givenClientExecuteRequest_whenTrustManagerStrategyIsRegistered_thenStrategyShouldBeRequested() throws Exception
     {
         TrustManagerStrategy trustManagerStrategy = mock(TrustManagerStrategy.class);
         when(trustManagerStrategy.checkTrusted(any(X509Certificate[].class), anyString())).thenReturn(true);
-        
+
         SSLContext sslContext = SSLContextBuilder.create()
                 .setTrustStore(KeyStoreBuilder.create()
                         .setType(KeyStoreType.JKS)
@@ -195,32 +198,120 @@ public class SslContextBuilderIT
                         .build())
                 .setKeyStorePassword("PtUPmi#o".toCharArray())
                 .build();
-        
+
         execute(sslContext);
-        
+
         verify(trustManagerStrategy).checkTrusted(any(X509Certificate[].class), anyString());
     }
-    
+
+    @Test(expected = SSLHandshakeException.class)
+    public void givenClientExecuteRequest_whenTrustManagerStrategyThrowsExceptionAndServerIsNotTrustedByClient_thenRequestShouldBeAnswered() throws Exception
+    {
+        TrustManagerStrategy trustManagerStrategy = mock(TrustManagerStrategy.class);
+        when(trustManagerStrategy.checkTrusted(any(X509Certificate[].class), anyString())).thenThrow(new CertificateException());
+
+        SSLContext sslContext = SSLContextBuilder.create()
+                .setTrustStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile()).build())
+                .setTrustManagerStrategy(trustManagerStrategy).setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile()).build())
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).build();
+
+        execute(sslContext);
+    }
+
     @Test
-    public void clientExecuteRequestShouldRequestKeyManagerStrategyWhenClientTrustedServer() throws Exception
+    public void givenClientExecuteRequest_whenTrustManagerStrategyReturnedFalseAndServerIsNotTrustedByClient_thenRequestShouldBeAnswered() throws Exception
+    {
+        TrustManagerStrategy trustManagerStrategy = mock(TrustManagerStrategy.class);
+        when(trustManagerStrategy.checkTrusted(any(X509Certificate[].class), anyString())).thenReturn(false);
+
+        SSLContext sslContext = SSLContextBuilder.create()
+                .setTrustStore(
+                        KeyStoreBuilder.create().setType(KeyStoreType.JKS).setPath(SslContextBuilderIT.class.getResource("/certs/server-trust.jks").getFile()) // server-trust
+                                                                                                                                                               // doesn't
+                                                                                                                                                               // contains
+                                                                                                                                                               // server
+                                .build())
+                .setTrustManagerStrategy(trustManagerStrategy).setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile()).build())
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).build();
+
+        execute(sslContext);
+    }
+
+    @Test(expected = SSLHandshakeException.class)
+    public void givenClientExecuteRequest_whenTrustManagerStrategyReturnedTrueAndServerIsNotTrustedByClient_thenExecptionShouldBeExecuted() throws Exception
+    {
+        TrustManagerStrategy trustManagerStrategy = mock(TrustManagerStrategy.class);
+        when(trustManagerStrategy.checkTrusted(any(X509Certificate[].class), anyString())).thenReturn(true);
+
+        SSLContext sslContext = SSLContextBuilder.create()
+                .setTrustStore(
+                        KeyStoreBuilder.create().setType(KeyStoreType.JKS).setPath(SslContextBuilderIT.class.getResource("/certs/server-trust.jks").getFile()) // server-trust
+                                                                                                                                                               // doesn't
+                                                                                                                                                               // contains
+                                                                                                                                                               // server
+                                .build())
+                .setTrustManagerStrategy(trustManagerStrategy).setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile()).build())
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).build();
+
+        execute(sslContext);
+    }
+
+    @Test
+    public void givenClientExecuteRequest_whenKeyManagerStrategyIsRegistered_thenStrategyShouldBeRequested() throws Exception
     {
         KeyManagerStrategy keyManagerStrategy = mock(KeyManagerStrategy.class);
-        
+
         SSLContext sslContext = SSLContextBuilder.create()
-                .setTrustStore(KeyStoreBuilder.create()
-                        .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile())
+                .setTrustStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile()).build())
+                .setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS).setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
                         .build())
-                .setKeyStore(KeyStoreBuilder.create()
-                        .setType(KeyStoreType.JKS)
-                        .setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
-                        .build())
-                .setKeyStorePassword("PtUPmi#o".toCharArray())
-                .setKeyManagerStrategy(keyManagerStrategy)
-                .build();
-        
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).setKeyManagerStrategy(keyManagerStrategy).build();
+
         execute(sslContext);
-        
+
+        verify(keyManagerStrategy).chooseAlias();
+    }
+
+    @Test
+    public void givenClientExecuteRequest_whenClientIsTrustedByServerAndServerIsTrustedByClientAndKeyManagerStrategyReturnsValidAlias_thenRequestShouldBeAnswered()
+            throws Exception
+    {
+        KeyManagerStrategy keyManagerStrategy = mock(KeyManagerStrategy.class);
+        when(keyManagerStrategy.chooseAlias()).thenReturn("client");
+
+        SSLContext sslContext = SSLContextBuilder.create()
+                .setTrustStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile()).build())
+                .setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS).setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
+                        .build())
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).setKeyManagerStrategy(keyManagerStrategy).build();
+
+        execute(sslContext);
+
+        verify(keyManagerStrategy).chooseAlias();
+    }
+
+    @Test(expected = SocketException.class)
+    public void givenClientExecuteRequest_whenClientIsTrustedByServerAndServerIsTrustedByClientAndKeyManagerStrategyReturnsInvalidAlias_thenRequestShouldBeAnswered()
+            throws Exception
+    {
+        KeyManagerStrategy keyManagerStrategy = mock(KeyManagerStrategy.class);
+        when(keyManagerStrategy.chooseAlias()).thenReturn("unknown");
+
+        SSLContext sslContext = SSLContextBuilder.create()
+                .setTrustStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS)
+                        .setPath(SslContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile()).build())
+                .setKeyStore(KeyStoreBuilder.create().setType(KeyStoreType.JKS).setPath(SslContextBuilderIT.class.getResource("/certs/client.jks").getFile())
+                        .build())
+                .setKeyStorePassword("PtUPmi#o".toCharArray()).setKeyManagerStrategy(keyManagerStrategy).build();
+
+        execute(sslContext);
+
         verify(keyManagerStrategy).chooseAlias();
     }
 }
