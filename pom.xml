@@ -2,7 +2,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.j3t</groupId>
 	<artifactId>ssl-utils</artifactId>
-	<version>1.0.1-SNAPSHOT</version>
+	<version>1.0.1</version>
 
 	<name>ssl-utils</name>
 	<description>Is a library of utilities to assist with developing security functionality in Java applications.</description>
@@ -40,7 +40,8 @@
 		<url>https://github.com/j3t/ssl-utils</url>
 		<connection>scm:git:git@github.com:git://github.com/j3t/ssl-utils.git</connection>
 		<developerConnection>scm:git:git@github.com:git@github.com:j3t/ssl-utils.git</developerConnection>
-	</scm>
+	  <tag>ssl-utils-1.0.1</tag>
+  </scm>
 
 	<developers>
 		<developer>
