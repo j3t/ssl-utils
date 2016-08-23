@@ -59,14 +59,23 @@ public class ResourceKeyStoreTest
                 .setPassword(password.toCharArray())
                 .build();
         
-        assertArrayEquals(aliases, KeyStoreHelper.getAliases(keyStore));
+        String[] actualAliases = KeyStoreHelper.getAliases(keyStore);
+        
+        Arrays.sort(aliases);
+        Arrays.sort(actualAliases);
+        
+        assertArrayEquals(aliases, actualAliases);
         
         for (int i = 0; i < aliases.length; i++)
         {
             Certificate certificate = keyStore.getCertificate(aliases[i]);
+            KeyUsage[] actualKeyUsages = CertificateHelper.getKeyUsages(certificate);
+
+            Arrays.sort(keyUsages[i]);
+            Arrays.sort(actualKeyUsages);
             
             assertTrue(CertificateHelper.isValid(certificate));
-            assertArrayEquals(keyUsages[i], CertificateHelper.getKeyUsages(certificate));
+            assertArrayEquals(keyUsages[i], actualKeyUsages);
         }
     }
 }
