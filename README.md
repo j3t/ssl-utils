@@ -56,7 +56,7 @@ To access a PKCS #11 library key store, the type must be set to 'PKCS11' and lib
 KeyStore keyStore = KeyStoreBuilder.create()
 		.setType(KeyStoreType.PKCS11)
 		.setLibraryPath("/path/to/external/pkcs11.dll")
-		.setPassword("123456".toCharArray()) // optional, password or pin to access the store
+		.setPassword("123456") // optional, password or pin to access the store
 		.build();
 ```
 
