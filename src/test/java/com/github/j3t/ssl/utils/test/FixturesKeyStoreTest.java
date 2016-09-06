@@ -1,7 +1,16 @@
 package com.github.j3t.ssl.utils.test;
 
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_CLIENT;
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_CLIENT_P12;
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_EMPTY;
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_MULTI;
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_SERVER;
+import static com.github.j3t.ssl.utils.test.Fixtures.KEYSTORE_UNKNOWN_CLIENT;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertTrue;
+
+import static com.github.j3t.ssl.utils.types.KeyUsage.*;
 
 import java.security.KeyStore;
 import java.security.cert.Certificate;
@@ -14,25 +23,19 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 import com.github.j3t.ssl.utils.CertificateHelper;
-import com.github.j3t.ssl.utils.KeyStoreBuilder;
 import com.github.j3t.ssl.utils.KeyStoreHelper;
-import com.github.j3t.ssl.utils.types.KeyStoreType;
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
 @RunWith(Parameterized.class)
-public class ResourceKeyStoreTest
+public class FixturesKeyStoreTest
 {
-    private String keyStoreType;
-    private String path;
+    private KeyStore keyStore;
     private String[] aliases;
     private KeyUsage[][] keyUsages;
-    private String password;
 
-    public ResourceKeyStoreTest(String keyStoreType, String path, String password, String[] aliases, KeyUsage[][] keyUsages)
+    public FixturesKeyStoreTest(KeyStore keyStore, String[] aliases, KeyUsage[][] keyUsages)
     {
-        this.keyStoreType = keyStoreType;
-        this.path = path;
-        this.password = password;
+        this.keyStore = keyStore;
         this.aliases = aliases;
         this.keyUsages = keyUsages;
     }
@@ -41,24 +44,18 @@ public class ResourceKeyStoreTest
     public static Collection<Object[]> data()
     {
         return Arrays.asList(new Object[][] {
-            {KeyStoreType.JKS, "/certs/client.jks", "PtUPmi#o", new String[]{"client"}, new KeyUsage[][]{{KeyUsage.DIGITAL_SIGNATURE}}},
-            {KeyStoreType.PKCS12, "/certs/client.p12", "PtUPmi#o", new String[]{"client"}, new KeyUsage[][]{{KeyUsage.DIGITAL_SIGNATURE}}},
-            {KeyStoreType.JKS, "/certs/empty.jks", "changeit", new String[0], new KeyUsage[0][0]},
-            {KeyStoreType.JKS, "/certs/multi.jks", "changeit", new String[]{"client", "server"}, new KeyUsage[][]{{KeyUsage.DIGITAL_SIGNATURE}, {KeyUsage.KEY_CERT_SIGN, KeyUsage.C_RL_SIGN}}},
-            {KeyStoreType.JKS, "/certs/server.jks", "EC\\sEOoY", new String[]{"server"}, new KeyUsage[][]{{KeyUsage.KEY_CERT_SIGN, KeyUsage.C_RL_SIGN}}},
-            {KeyStoreType.JKS, "/certs/unknown-client.jks", "changeit", new String[]{"client"}, new KeyUsage[][]{{KeyUsage.DIGITAL_SIGNATURE}}},
+            {KEYSTORE_CLIENT, new String[]{"client"}, new KeyUsage[][]{{DIGITAL_SIGNATURE}}},
+            {KEYSTORE_CLIENT_P12, new String[]{"client"}, new KeyUsage[][]{{DIGITAL_SIGNATURE}}},
+            {KEYSTORE_EMPTY, new String[0], new KeyUsage[0][0]},
+            {KEYSTORE_MULTI, new String[]{"client", "server"}, new KeyUsage[][]{{DIGITAL_SIGNATURE}, {KEY_CERT_SIGN, C_RL_SIGN}}},
+            {KEYSTORE_SERVER, new String[]{"server"}, new KeyUsage[][]{{KEY_CERT_SIGN, C_RL_SIGN}}},
+            {KEYSTORE_UNKNOWN_CLIENT, new String[]{"client"}, new KeyUsage[][]{{DIGITAL_SIGNATURE}}},
             });
     }
 
     @Test
     public void testKeyStore() throws Exception
     {
-        KeyStore keyStore = KeyStoreBuilder.create()
-                .setType(keyStoreType)
-                .setPath(ResourceKeyStoreTest.class.getResource(path).getFile())
-                .setPassword(password.toCharArray())
-                .build();
-        
         String[] actualAliases = KeyStoreHelper.getAliases(keyStore);
         
         Arrays.sort(aliases);

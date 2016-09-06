@@ -11,19 +11,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
-import com.github.j3t.ssl.utils.KeyStoreBuilder;
 import com.github.j3t.ssl.utils.KeyStoreHelper;
-import com.github.j3t.ssl.utils.types.KeyStoreType;
 
 @RunWith(Parameterized.class)
-public class ResourceTrustStoreTest
+public class FixturesTrustStoreTest
 {
-    private String name;
+    private KeyStore trustStore;
     private String[] aliases;
 
-    public ResourceTrustStoreTest(String name, String[] aliases)
+    public FixturesTrustStoreTest(KeyStore trustStore, String[] aliases)
     {
-        this.name = name;
+        this.trustStore = trustStore;
         this.aliases = aliases;
     }
 
@@ -31,19 +29,14 @@ public class ResourceTrustStoreTest
     public static Collection<Object[]> data()
     {
         return Arrays.asList(new Object[][] {
-            {"/certs/client-trust.jks", new String[]{"server"}}, 
-            {"/certs/server-trust.jks", new String[]{"client"}}
+            {Fixtures.TRUSTSTORE_CLIENT, new String[]{"server"}}, 
+            {Fixtures.TRUSTSTORE_SERVER, new String[]{"client"}}
             });
     }
 
     @Test
     public void testTrustStore() throws Exception
     {
-        KeyStore keyStore = KeyStoreBuilder.create()
-                .setType(KeyStoreType.JKS)
-                .setPath(ResourceTrustStoreTest.class.getResource(name).getFile())
-                .build();
-        
-        assertArrayEquals(aliases, KeyStoreHelper.getAliases(keyStore));
+        assertArrayEquals(aliases, KeyStoreHelper.getAliases(trustStore));
     }
 }

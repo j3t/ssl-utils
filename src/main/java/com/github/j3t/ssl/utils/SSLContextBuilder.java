@@ -7,6 +7,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 
 import javax.net.ssl.KeyManager;
@@ -41,6 +42,7 @@ public class SSLContextBuilder
     
     private SecureRandom secureRandomGenerator;
     private String protocol;
+    private TrustManager[] trustManagers;
 
     /**
      * Creates a new {@link SSLContextBuilder} instance.
@@ -62,6 +64,7 @@ public class SSLContextBuilder
         trustStore = null;
         trustManagerAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
         trustManagerStrategy = null;
+        trustManagers = null;
         
         secureRandomGenerator = null;
         protocol = null;
@@ -109,6 +112,22 @@ public class SSLContextBuilder
         this.trustManagerStrategy = trustManagerStrategy;
         return this;
     }
+    
+    /**
+     * Set up a strategy to establish trustworthiness of certificates independent of the trustworthiness in the trust
+     * store. This is an alternative to {@link #setTrustManagerStrategy(TrustManagerStrategy)} and can also used to to
+     * override the standard certificate verification process.<br>
+     * <br>
+     * Default: none
+     * 
+     * @param trustManagers the {@link TrustManager}s
+     * @return this @link SSLContextBuilder}
+     */
+    public SSLContextBuilder setTrustManagers(TrustManager[] trustManagers)
+    {
+        this.trustManagers = trustManagers;
+        return this;
+    }
 
     /**
      * Set up the key store. This store contains private key (at least one) to authenticate your self.<br>
@@ -137,7 +156,21 @@ public class SSLContextBuilder
         this.keyStorePassword = keyStorePassword;
         return this;
     }
-
+    
+    /**
+     * Set up the key store password.<br>
+     * <br>
+     * Default: none
+     * 
+     * @param keyStorePassword the key store password (e.g. changeit)
+     * @return this @link SSLContextBuilder}
+     */
+    public SSLContextBuilder setKeyStorePassword(String keyStorePassword)
+    {
+        this.keyStorePassword = keyStorePassword != null ? keyStorePassword.toCharArray() : null;
+        return this;
+    }
+    
     /**
      * Set up the algorithm name of the KeyManagerFactory.<br>
      * <br>
@@ -204,17 +237,22 @@ public class SSLContextBuilder
      */
     public SSLContext build() throws GeneralSecurityException, IOException
     {
-        SSLContext ctx = SSLContext.getInstance(createProtocol());
+        SSLContext ctx = createSSLContext();
         ctx.init(createKeyManagers(), createTrustManagers(), createSecureRandomGenerator());
 
         return ctx;
     }
 
-    protected String createProtocol()
+    protected SSLContext createSSLContext() throws NoSuchAlgorithmException, NoSuchProviderException
     {
-        if (protocol != null)
-            return protocol;
+        if (protocol == null)
+            return SSLContext.getInstance(getProtocolBestEffort());
         
+        return SSLContext.getInstance(protocol);
+    }
+
+    protected String getProtocolBestEffort()
+    {
         if (EnvironmentHelper.isJava8OrHigher())
             return SslProtocol.TLSv12;
         
@@ -242,13 +280,15 @@ public class SSLContextBuilder
 
     protected TrustManager[] createTrustManagers() throws NoSuchAlgorithmException, KeyStoreException
     {
-        if (trustStore == null)
-            return null;
-            
-        TrustManagerFactory instance = TrustManagerFactory.getInstance(trustManagerAlgorithm);
-        instance.init(trustStore);
+        TrustManager[] trustManagers = this.trustManagers;
         
-        TrustManager[] trustManagers = instance.getTrustManagers(); 
+        if (trustManagers == null)
+        {
+            TrustManagerFactory instance = TrustManagerFactory.getInstance(trustManagerAlgorithm);
+            instance.init(trustStore);
+            
+            trustManagers = instance.getTrustManagers(); 
+        }
 
         if (trustManagerStrategy != null)
             trustManagers = addStrategy(trustManagers);

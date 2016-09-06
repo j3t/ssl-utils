@@ -167,6 +167,20 @@ public class KeyStoreBuilder
         this.password = password;
         return this;
     }
+    
+    /**
+     * Set the password to access the key store. Default is <code>null</code> (no password required).
+     * 
+     * @param password the password used to check the integrity of the key store, the password used to unlock the key
+     *            store, or null
+     * 
+     * @return {@link KeyStoreBuilder}
+     */
+    public KeyStoreBuilder setPassword(String password)
+    {
+        this.password = password != null ? password.toCharArray() : null;
+        return this;
+    }
 
     /**
      * Build a {@link KeyStore}.
@@ -207,6 +221,26 @@ public class KeyStoreBuilder
             fixKeyStoreAliases(keyStore);
 
         return keyStore;
+    }
+    
+    /**
+     * Build a {@link KeyStore} without catching exceptions.
+     * 
+     * @see #build()
+     * @return {@link KeyStore}
+     * 
+     * @throws IllegalStateException if the build failed
+     */
+    public KeyStore buildUnsecure() throws IllegalStateException
+    {
+        try
+        {
+            return build();
+        }
+        catch (Exception e)
+        {
+            throw new IllegalStateException("build failed!", e);
+        }
     }
 
     private void setUpPKCS11ProviderWithLibrary() throws IOException
