@@ -36,13 +36,13 @@ import com.github.j3t.ssl.utils.types.SslProtocol;
  */
 public class TLS12Test
 {
-    private static URI uri;
+    private static URI request;
 
     @BeforeClass
-    public static void startServerOnRandomListenerPort() throws Exception
+    public static void startTSL12ServerOnRandomListenerPort() throws Exception
     {
         int port = new Random().nextInt(1024 * 64 - 1 - 1024) + 1024;
-        uri = new URI("https", null, "localhost", port, null, null, null);
+        request = new URI("https", null, "localhost", port, null, null, null);
 
         SslContextFactory sslContextFactory = new SslContextFactory();
         sslContextFactory.setKeyStore(Fixtures.KEYSTORE_SERVER);
@@ -80,7 +80,7 @@ public class TLS12Test
                 .setTrustStore(Fixtures.TRUSTSTORE_CLIENT)
                 .build();
         
-        HttpsURLConnection conn = (HttpsURLConnection) uri.toURL().openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) request.toURL().openConnection();
         conn.setSSLSocketFactory(sslContext.getSocketFactory());
         InputStream in = conn.getInputStream();
 
