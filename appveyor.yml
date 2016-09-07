@@ -18,6 +18,10 @@ environment:
 os: Windows Server 2012
 
 install:
+  # Install Maven
+  - cmd: choco install maven -y -f
+  - cmd: refreshenv
+
   # Download the Appveyor Python build accessories into subdirectory .\appveyor
   - mkdir appveyor
   - ps: $wc = new-object net.webclient
@@ -26,10 +30,8 @@ install:
   - ps: $install = $wc.DownloadString($env:APPVEYOR_PYTHON_URL + 'install.ps1')
   - ps: $install | Out-File -Encoding ascii -FilePath appveyor\install.ps1
   - ps: if (-not(Test-Path($env:PYTHON))) { & appveyor\install.ps1 }
-  
-  # Install Maven
-  - cmd: choco install maven -y -f
-  - cmd: refreshenv
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "%CMD_IN_ENV% python setup.py install"
 
 build_script:
   - mvn --batch-mode clean package -DskipTests
