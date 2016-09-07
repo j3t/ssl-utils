@@ -12,11 +12,11 @@ environment:
 os: Windows Server 2012
 
 install:
-  - ps: choco install maven
-  - ps: refreshenv
+  - cmd: choco install maven -y -f
+  - cmd: refreshenv
 
 build_script:
-  - ps: mvn --batch-mode clean package -DskipTests
+  - mvn --batch-mode clean package -DskipTests
 
 test_script:
-  - ps: mvn --batch-mode verify
+  - mvn --batch-mode verify
