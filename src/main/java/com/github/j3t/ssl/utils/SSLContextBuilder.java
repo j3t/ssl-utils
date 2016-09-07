@@ -253,11 +253,8 @@ public class SSLContextBuilder
 
     protected String getProtocolBestEffort()
     {
-        if (EnvironmentHelper.isJava8OrHigher())
-            return SslProtocol.TLSv12;
-        
         if (EnvironmentHelper.isJava7OrHigher())
-            return SslProtocol.TLSv11;
+            return SslProtocol.TLSv12;
         
         return SslProtocol.TLSv10;
     }
