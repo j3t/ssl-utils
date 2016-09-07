@@ -21,7 +21,7 @@ install:
   - ps: $run | Out-File -Encoding ascii -FilePath appveyor\run_with_env.cmd
   - ps: $install = $wc.DownloadString($env:APPVEYOR_PYTHON_URL + 'install.ps1')
   - ps: $install | Out-File -Encoding ascii -FilePath appveyor\install.ps1
-  - ps: if (-not(Test-Path($env:PYTHON))) { & appveyor\install.ps1 }
+  - ps: appveyor\install.ps1
   
   # Install Maven
   - cmd: choco install maven -y -f
