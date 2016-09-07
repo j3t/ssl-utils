@@ -16,7 +16,7 @@ install:
   - ps: refreshenv
 
 build_script:
-  - mvn --batch-mode clean package -DskipTests
+  - ps: mvn --batch-mode clean package -DskipTests
 
 test_script:
-  - mvn --batch-mode verify
+  - ps: mvn --batch-mode verify
