@@ -3,6 +3,10 @@ version: '{build}'
 environment:
   global:
     APPVEYOR_PYTHON_URL: "https://raw.githubusercontent.com/ogrisel/python-appveyor-demo/master/appveyor/"
+    PYTHON: "C:\\Python27"
+    PYTHON_VERSION: "2.7.x" # currently 2.7.9
+    PYTHON_ARCH: "32"
+    
   matrix:
     #- JAVA_HOME: C:\Program Files\Java (x86)\jdk1.6.0
     #- JAVA_HOME: C:\Program Files\Java (x86)\jdk1.7.0
