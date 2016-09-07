@@ -1,7 +1,6 @@
 package com.github.j3t.ssl.utils;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -18,39 +17,6 @@ import com.github.j3t.ssl.utils.types.SslProtocol;
 
 public class SSLContextBuilderTest
 {
-    @Test
-    public void givenSSLContextWithDefaultProtocol_whenJava6_thenGetProtocolShouldReturnTLSv10() throws Exception
-    {
-        assumeTrue("Java Version isn't 1.6!", EnvironmentHelper.isJava6());
-        
-        SSLContext sslContext = SSLContextBuilder.create()
-                .build();
-        
-        assertEquals(SslProtocol.TLSv10, sslContext.getProtocol());
-    }
-    
-    @Test
-    public void givenSSLContextWithDefaultProtocol_whenJava7_thenGetProtocolShouldReturnTLSv10() throws Exception
-    {
-        assumeTrue("Java Version isn't 1.7!", EnvironmentHelper.isJava7());
-        
-        SSLContext sslContext = SSLContextBuilder.create()
-                .build();
-        
-        assertEquals(SslProtocol.TLSv11, sslContext.getProtocol());
-    }
-    
-    @Test
-    public void givenSSLContextWithDefaultProtocol_whenJava8_thenGetProtocolShouldReturnTLSv10() throws Exception
-    {
-        assumeTrue("Java Version isn't 1.8!", EnvironmentHelper.isJava8());
-        
-        SSLContext sslContext = SSLContextBuilder.create()
-                .build();
-        
-        assertEquals(SslProtocol.TLSv12, sslContext.getProtocol());
-    }
-
     @Test
     public void givenSSLContext_whenBuildWithSpecificProtocol_thenGetProtocolShouldReturnSpecificProtocol() throws Exception
     {
