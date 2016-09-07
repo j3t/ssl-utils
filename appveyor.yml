@@ -14,7 +14,6 @@ os: Windows Server 2012
 install:
   - ps: choco install maven
   - ps: refreshenv
-  - mvn --version
 
 build_script:
   - mvn --batch-mode clean package -DskipTests
