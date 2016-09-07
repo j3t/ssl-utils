@@ -17,9 +17,6 @@ install:
   - mvn --version
 
 build_script:
-  - mvn clean verify -B
-
-build_script:
   - mvn --batch-mode clean package -DskipTests
 
 test_script:
