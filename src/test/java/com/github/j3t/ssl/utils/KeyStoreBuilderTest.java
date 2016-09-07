@@ -1,6 +1,6 @@
 package com.github.j3t.ssl.utils;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.security.KeyStore;
@@ -13,8 +13,20 @@ import com.github.j3t.ssl.utils.types.KeyStoreType;
 
 public class KeyStoreBuilderTest
 {
+    @Test(expected = IllegalStateException.class)
+    public void givenKeyStoreBuilderWithInvalidLibraryPath_whenBuildUnsecure_thenExceptionShouldBeThrown() throws Exception
+    {
+        KeyStoreBuilder.create().setLibraryPath("/bla/foo").buildUnsecure();
+    }
+    
     @Test
-    public void givenKeyStoreBuilderWithoutType_whenBuild_thenKeyStoreShouldRetunrsDefaultType() throws Exception
+    public void givenKeyStoreBuilder_whenSetPasswirdStringWithNullInvoked_thenKeyStoreBuilderShouldBeReturned() throws Exception
+    {
+        assertNotNull(KeyStoreBuilder.create().setPassword((String) null));
+    }
+
+    @Test
+    public void givenKeyStoreBuilderWithoutType_whenBuild_thenKeyStoreShouldBeReturnedDefaultType() throws Exception
     {
         assertEquals(KeyStore.getDefaultType(), KeyStoreBuilder.create().build().getType());
     }

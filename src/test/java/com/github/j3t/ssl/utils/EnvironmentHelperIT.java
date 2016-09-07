@@ -5,7 +5,7 @@ import static org.junit.Assume.*;
 
 import org.junit.Test;
 
-public class EnvironmentHelperTest
+public class EnvironmentHelperIT
 {
     @Test
     public void givenWindows()
