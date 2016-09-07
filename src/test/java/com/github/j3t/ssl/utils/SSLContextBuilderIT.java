@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.SocketException;
 import java.net.URI;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
@@ -239,7 +238,8 @@ public class SSLContextBuilderIT
         verify(keyManagerStrategy).chooseAlias();
     }
 
-    @Test(expected = SocketException.class)
+    // expected exception: windows = SocketException, osx/linux = SSLHandshakeException
+    @Test(expected = IOException.class)
     public void givenTrustedClientAndTrustedServer_whenRequestExecutedAndKeyManagerStrategyReturnsInvalidAlias_thenExceptionShouldBeThrown() throws Exception
     {
         KeyManagerStrategy keyManagerStrategy = mock(KeyManagerStrategy.class);
