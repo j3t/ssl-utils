@@ -19,9 +19,4 @@ build_script:
   - mvn --batch-mode clean package -DskipTests
 
 test_script:
-  - mvn --batch-mode verify
-
-after_test:
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-  - pip install codecov
-  - codecov
+  - mvn --batch-mode verify -DrepoToken="%repo_token%"
