@@ -14,3 +14,6 @@ matrix:
       osx_image: xcode7.3
 
 script: mvn verify coveralls:report -DrepoToken=$repo_token
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
