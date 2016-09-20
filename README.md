@@ -3,6 +3,7 @@
 [![Download Maven Central](https://img.shields.io/badge/maven--central-deployed-blue.svg)](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22com.github.j3t%22%20AND%20a%3A%22ssl-utils%22)
 [![Apache License 2.0](https://img.shields.io/badge/license-Apache%202.0-green.svg)](https://github.com/j3t/ssl-utils/blob/master/LICENSE)
 [![Code Coverage](https://img.shields.io/codecov/c/github/j3t/ssl-utils/master.svg)](https://codecov.io/github/j3t/ssl-utils?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/j3t/ssl-utils/badge.svg)](https://coveralls.io/github/j3t/ssl-utils)
 
 # ssl-utils
 Is a library of utilities to assist with developing security functionality in Java applications.
