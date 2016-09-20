@@ -19,4 +19,4 @@ build_script:
   - mvn --batch-mode clean package -DskipTests
 
 test_script:
-  - mvn --batch-mode verify -DrepoToken="%repo_token%"
+  - mvn --batch-mode verify coveralls:report -DrepoToken="%repo_token%"
