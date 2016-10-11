@@ -78,7 +78,7 @@ public class EnvironmentHelperIT
     {
         assumeTrue("Java Version isn't 6!", System.getProperty("java.version").startsWith("1.6"));
         
-        assertTrue(EnvironmentHelper.isJava6());
+        assertTrue("" + EnvironmentHelper.isJava6(), EnvironmentHelper.isJava6());
         assertTrue(EnvironmentHelper.isJava6OrHigher());
         assertFalse(EnvironmentHelper.isJava7());
         assertFalse(EnvironmentHelper.isJava7OrHigher());
@@ -105,7 +105,7 @@ public class EnvironmentHelperIT
         assumeTrue("Java Version isn't 7!", System.getProperty("java.version").startsWith("1.8"));
         
         assertFalse(EnvironmentHelper.isJava6());
-        assertTrue(EnvironmentHelper.isJava6OrHigher());
+        assertTrue("" + System.getProperty("java.version"), EnvironmentHelper.isJava6OrHigher());
         assertFalse(EnvironmentHelper.isJava7());
         assertTrue(EnvironmentHelper.isJava7OrHigher());
         assertTrue(EnvironmentHelper.isJava8());

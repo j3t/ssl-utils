@@ -7,9 +7,12 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
@@ -91,6 +94,27 @@ public final class CertificateHelper
 
         return castToX509CertificateOrThrowException(certificate).getIssuerX500Principal().toString();
     }
+    
+    /**
+     * Gets the issuers of a given certificate chain.
+     * 
+     * @param certificate the certificate
+     * @return {@link String} (e.g. CN=DigiCert Assured ID Root G3, OU=www.digicert.com, O=DigiCert Inc, C=US) or an
+     *         empty String if the certificate isn't a x509 certificate, shouldn't be <code>null</code>
+     * @throws IllegalArgumentException if the certificate chain is <code>null</code> or contains at least one non X.509
+     *         certificate
+     */
+    public static Collection<String> getIssuers(Certificate[] certificateChain)
+    {
+    	checkCertificateChain(certificateChain);
+    	
+    	Set<String> issuers = new HashSet<String>();
+    	
+    	for (Certificate certificate : certificateChain)
+    		issuers.add(getIssuer(certificate));
+
+        return issuers;
+    }
 
     /**
      * Gets the {@link KeyUsage}s of the given certificate.
@@ -147,10 +171,13 @@ public final class CertificateHelper
      * @param keyUsage the specific {@link KeyUsage}
      * @return <code>true</code> if at least one certificate has this specific {@link KeyUsage}, otherwise
      *         <code>false</code>
-     * @throws IllegalArgumentException if the chain is <code>null</code> or contains null
+     * @throws IllegalArgumentException if the certificate chain is <code>null</code> or contains at least one non X.509
+     *         certificate
      */
     public static boolean isKeyUsagePresent(Certificate[] certificateChain, KeyUsage keyUsage)
     {
+    	checkCertificateChain(certificateChain);
+    	
         for (Certificate certificate : certificateChain)
             if (isKeyUsagePresent(certificate, keyUsage))
                 return true;
@@ -231,4 +258,15 @@ public final class CertificateHelper
             throw new IllegalArgumentException("certificate must not be null!");
     }
 
+    /**
+     * Checks that the given certificate chain is not <code>null</code>.
+     * 
+     * @param certificateChains the given certificate chain
+     * @throws IllegalArgumentException if certificate chain is <code>null</code>
+     */
+    public static void checkCertificateChain(Certificate[] certificateChain)
+    {
+        if (certificateChain == null)
+            throw new IllegalArgumentException("certificate chain must not be null!");
+    }
 }

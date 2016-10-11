@@ -1,6 +1,11 @@
 package com.github.j3t.ssl.utils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -12,13 +17,13 @@ import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.security.auth.x500.X500Principal;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.j3t.ssl.utils.CertificateHelper;
 import com.github.j3t.ssl.utils.types.KeyUsage;
 
 public class CertificateHelperTest
@@ -121,6 +126,24 @@ public class CertificateHelperTest
     }
     
     @Test(expected = IllegalArgumentException.class)
+    public void getIssuersShouldThrowExceptionWhenCalledWithoutCertificate()
+    {
+        CertificateHelper.getIssuers(null);
+    }
+    
+    @Test
+    public void getIssuersShouldReturnOneStringWhenCalledWithOneCertificate()
+    {
+        X500Principal issuer = new X500Principal("CN=TEST");
+        when(x509Certificate.getIssuerX500Principal()).thenReturn(issuer);
+        
+        Iterator<String> issuers = CertificateHelper.getIssuers(new Certificate[]{x509Certificate}).iterator();
+        
+		assertEquals("CN=TEST", issuers.next());
+		assertFalse(issuers.hasNext());
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
     public void getDetailsShouldThrowExceptionWhenCalledWithoutCertificate()
     {
         CertificateHelper.getDetails(null);
@@ -189,6 +212,12 @@ public class CertificateHelperTest
         doThrow(new CertificateNotYetValidException()).when(x509Certificate).checkValidity(any(Date.class));
         
         assertFalse(CertificateHelper.isValid(x509Certificate));
+    }
+    
+    @Test(expected = IllegalArgumentException.class)
+    public void isKeyUsagePresentShouldThrowExceptionWhenCertificateChainIsNull()
+    {
+        CertificateHelper.isKeyUsagePresent((Certificate[]) null, KeyUsage.DATA_ENCIPHERMENT);
     }
     
     @Test

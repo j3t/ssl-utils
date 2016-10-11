@@ -281,35 +281,34 @@ public class KeyStoreBuilder
 
             if ("sun.security.mscapi.KeyStore$MY".equals(keyStoreVeritable.getClass().getName()))
             {
-                Collection<?> entries;
                 String alias;
                 String hashCode;
                 X509Certificate[] certificates;
 
                 field = keyStoreVeritable.getClass().getEnclosingClass().getDeclaredField("entries");
                 field.setAccessible(true);
-                entries = (Collection<?>) field.get(keyStoreVeritable);
-
-                for (Object entry : entries)
-                {
-                    field = entry.getClass().getDeclaredField("certChain");
-                    field.setAccessible(true);
-                    certificates = (X509Certificate[]) field.get(entry);
-
-                    hashCode = certificates[0].hashCode() + "";
-
-                    field = entry.getClass().getDeclaredField("alias");
-                    field.setAccessible(true);
-                    alias = (String) field.get(entry);
-
-                    if (!alias.equals(hashCode))
-                        field.set(entry, alias.concat(" - ").concat(hashCode));
-                }
+                
+                if (field.get(keyStoreVeritable) instanceof Collection)
+	                for (Object entry : (Collection<?>) field.get(keyStoreVeritable))
+	                {
+	                    field = entry.getClass().getDeclaredField("certChain");
+	                    field.setAccessible(true);
+	                    certificates = (X509Certificate[]) field.get(entry);
+	
+	                    hashCode = certificates[0].hashCode() + "";
+	
+	                    field = entry.getClass().getDeclaredField("alias");
+	                    field.setAccessible(true);
+	                    alias = (String) field.get(entry);
+	
+	                    if (!alias.equals(hashCode))
+	                        field.set(entry, alias.concat(" - ").concat(hashCode));
+	                }
             }
         }
         catch (Exception e)
         {
-            throw new IllegalAccessException("fix keystore aliases failed!");
+            throw new IllegalStateException("fix keystore aliases failed!", e);
         }
     }
 

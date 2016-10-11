@@ -9,8 +9,8 @@ package com.github.j3t.ssl.utils;
  */
 public class EnvironmentHelper
 {
-    private static String OS = createOperatingSystem();
-    private static double JAVA_VERSION = createJavaVersion();
+    private static final String OS = createOperatingSystem();
+    private static final double JAVA_VERSION = createJavaVersion();
 
     public static boolean isWindows()
     {
