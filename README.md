@@ -15,15 +15,15 @@ In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/tech
 ssl-utils provides some builder to create key materials easily and quickly. There are also helpers to access the key materials and to control the runtime behavior. The library is written in Java and requires version 6 or higher.
 
 ## SSLContextBuilder
-The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html). To create a SSLContext, the KeyStore - to authenticate yourself - and the TrustStore - to define the trusted peers - must be configured.
+The [SSLContextBuilder](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html).
 
-To create the default SSL Context, nothing has to be configured. In this case the default key- and trust store of the JVM is used. The default SSL protocol is TLS v1.2 (JVM v7 or higher) or TLS v1.0 (JVM v6 or lower).
+To create the default SSL Context, nothing has to be configured. In this case the default key- and trust-store of the JVM is used. The default SSL protocol is TLS v1.2 (JVM v7 or higher) or TLS v1.0 (JVM v6 or lower).
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-you can also configure a key- or trust-store...
+or set up your own key- and trust-store...
 ```java
 KeyStore trustStore = ...
 KeyStore keyStore = ...
@@ -47,13 +47,13 @@ or use the [KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/mai
 KeyStore keyStore = ...
 SSLContext sslContext = SSLContextBuilder.create()
 		.setKeyStore(keyStore)
-		.setKeyManagerStrategy(() -> getAliases(keyStore, DIGITAL_SIGNATURE)[0])
+		.setKeyManagerStrategy(() -> KeyStoreHelper.getAliases(keyStore, DIGITAL_SIGNATURE)[0])
 		.build();
 ```
 
-To control the trustworthiness of peer - independent of the trust manager configured in actual context - you must configure an [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java).
+To control the trustworthiness of the peers - independent of the trust manager configured in actual context - you must configure an [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java).
 
-trust all peers...
+trust the peer in any case...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy((chain, authType) -> true)
@@ -63,7 +63,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 or use the [CertificateHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/CertificateHelper.java) to check the issuer...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
-		.setTrustManagerStrategy((chain, authType) -> getIssuers(chain).contains("MyIssuer"))
+		.setTrustManagerStrategy((chain, authType) -> CertificateHelper.getIssuers(chain).contains("CN=MyIssuer"))
 		.build();
 ```
 
