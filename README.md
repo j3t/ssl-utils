@@ -23,7 +23,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-or set up your own key- and trust-store...
+or set up your own key- and trust-store ...
 ```java
 KeyStore trustStore = ...
 KeyStore keyStore = ...
@@ -35,14 +35,15 @@ SSLContext sslContext = SSLContextBuilder.create()
 ```
 
 To control the alias selection during the authentication, you must configure an [KeyManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/KeyManagerStrategy.java).
+
+The following snippet chooses the certificate/key with the alias "MyAlias" during the authentication proccess. This is needed if the key store contains more then one alias, otherwise the first alias is selected.
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setKeyManagerStrategy(() -> "MyAlias")
 		.build();
 ```
 
-or use the [KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreHelper.java) to find an certificate/alias with a specific key usage...
-
+or use the [KeyStoreHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/KeyStoreHelper.java) to find certificates/aliases with a specific key usage. This is useful if the key store contains multiple certificates with different [key usages](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/types/KeyUsage.java) and the proccess requires a specific key usage. The following snippet chooses the first alias found with the key usage DIGITAL_SIGNATURE.
 ```java
 KeyStore keyStore = ...
 SSLContext sslContext = SSLContextBuilder.create()
@@ -51,16 +52,16 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-To control the trustworthiness of the peers - independent of the trust manager configured in actual context - you must configure an [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java).
+To control the trustworthiness of peers - independent of the trust manager of the actual context - the [TrustManagerStrategy](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java) must be configured.
 
-trust the peer in any case...
+The following snippet overrule the result of the trust manager validation (trust any certificate/peer) ...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy((chain, authType) -> true)
 		.build();
 ```
 
-or use the [CertificateHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/CertificateHelper.java) to check the issuer...
+You can also use the [CertificateHelper](https://github.com/j3t/ssl-utils/blob/master/src/main/java/com/github/j3t/ssl/utils/CertificateHelper.java) to find a certificate/key contains a specific issuer ...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy((chain, authType) -> CertificateHelper.getIssuers(chain).contains("CN=MyIssuer"))
