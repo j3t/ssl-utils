@@ -1,15 +1,15 @@
-
 package com.github.j3t.ssl.utils.test;
 
 
-import java.security.KeyStore;
-
 import com.github.j3t.ssl.utils.KeyStoreBuilder;
 import com.github.j3t.ssl.utils.SSLContextBuilderIT;
-import static com.github.j3t.ssl.utils.types.KeyStoreType.*;
 
-public interface Fixtures
-{
+import java.security.KeyStore;
+
+import static com.github.j3t.ssl.utils.types.KeyStoreType.JKS;
+import static com.github.j3t.ssl.utils.types.KeyStoreType.PKCS12;
+
+public interface Fixtures {
     String CLIENT_JKS = SSLContextBuilderIT.class.getResource("/certs/client.jks").getFile();
     String CLIENT_TRUST_JKS = SSLContextBuilderIT.class.getResource("/certs/client-trust.jks").getFile();
     String SERVER_JKS = SSLContextBuilderIT.class.getResource("/certs/server.jks").getFile();
@@ -39,18 +39,18 @@ public interface Fixtures
      * Serial number: 296faac0<br>
      * Valid from: Fri Jul 22 13:40:29 CEST 2016 until: Sun Jul 07 13:40:29 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
-     *          SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
-     *          SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
+     * MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
+     * SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
+     * SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
      * D1:DE:63:4A:26:6C:65:A8:54:A2:64<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   DigitalSignature<br>
+     * DigitalSignature<br>
      * ]<br>
      * </code>
      */
@@ -76,19 +76,19 @@ public interface Fixtures
      * Serial number: 259901fe<br>
      * Valid from: Fri Jul 22 13:40:30 CEST 2016 until: Sun Jul 07 13:40:30 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  D8:06:8A:06:FE:D6:79:5E:E6:BA:36:EB:A9:1D:D1:27<br>
-     *          SHA1: DB:69:C9:BF:C4:C0:7B:5D:C8:DB:67:37:1C:14:F6:AF:4A:94:93:1E<br>
-     *          SHA256: 59:32:F5:16:E5:99:9F:3E:A9:2E:B1:60:78:13:12:CC:F7:FF:1D:8A:1A:<br>
+     * MD5:  D8:06:8A:06:FE:D6:79:5E:E6:BA:36:EB:A9:1D:D1:27<br>
+     * SHA1: DB:69:C9:BF:C4:C0:7B:5D:C8:DB:67:37:1C:14:F6:AF:4A:94:93:1E<br>
+     * SHA256: 59:32:F5:16:E5:99:9F:3E:A9:2E:B1:60:78:13:12:CC:F7:FF:1D:8A:1A:<br>
      * 12:23:85:79:47:25:8B:61:BD:E0:E9<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   Key_CertSign<br>
-     *   Crl_Sign<br>
+     * Key_CertSign<br>
+     * Crl_Sign<br>
      * ]<br>
      * </code>
      */
@@ -162,18 +162,18 @@ public interface Fixtures
      * Serial number: 77ebc33a<br>
      * Valid from: Fri Jul 22 12:09:57 CEST 2016 until: Sun Jul 07 12:09:57 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  5D:64:BF:D9:00:14:6F:9B:23:81:6F:B0:5D:5E:71:1C<br>
-     *          SHA1: 4B:AD:52:F5:B1:58:59:EE:FC:C1:5D:4B:E3:E2:80:B8:7B:CA:87:6D<br>
-     *          SHA256: 0B:8C:6B:F9:A0:DE:F4:E3:0D:12:C0:69:52:FA:98:55:B9:78:FA:12:7A:<br>
+     * MD5:  5D:64:BF:D9:00:14:6F:9B:23:81:6F:B0:5D:5E:71:1C<br>
+     * SHA1: 4B:AD:52:F5:B1:58:59:EE:FC:C1:5D:4B:E3:E2:80:B8:7B:CA:87:6D<br>
+     * SHA256: 0B:8C:6B:F9:A0:DE:F4:E3:0D:12:C0:69:52:FA:98:55:B9:78:FA:12:7A:<br>
      * 92:7F:CC:93:E0:4F:19:77:72:20:05<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   DigitalSignature<br>
+     * DigitalSignature<br>
      * ]<br>
      * <br>
      * <br>
@@ -191,19 +191,19 @@ public interface Fixtures
      * Serial number: 3c7050d0<br>
      * Valid from: Fri Jul 22 12:10:11 CEST 2016 until: Sun Jul 07 12:10:11 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  B9:0C:C1:D7:12:27:FD:23:4C:AA:8E:EF:C4:43:B9:6C<br>
-     *          SHA1: E1:28:0E:A9:10:DC:09:0D:D7:44:59:7E:CA:8B:5A:23:42:0D:C2:11<br>
-     *          SHA256: B4:6C:78:7A:F7:B8:A4:01:4E:97:C4:8A:0E:44:48:43:7F:4C:B9:9D:68:<br>
+     * MD5:  B9:0C:C1:D7:12:27:FD:23:4C:AA:8E:EF:C4:43:B9:6C<br>
+     * SHA1: E1:28:0E:A9:10:DC:09:0D:D7:44:59:7E:CA:8B:5A:23:42:0D:C2:11<br>
+     * SHA256: B4:6C:78:7A:F7:B8:A4:01:4E:97:C4:8A:0E:44:48:43:7F:4C:B9:9D:68:<br>
      * 0B:D5:6F:E2:99:EE:81:5D:A8:A2:89<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   Key_CertSign<br>
-     *   Crl_Sign<br>
+     * Key_CertSign<br>
+     * Crl_Sign<br>
      * ]<br>
      * </code>
      */
@@ -229,18 +229,18 @@ public interface Fixtures
      * Serial number: 296faac0<br>
      * Valid from: Fri Jul 22 13:40:29 CEST 2016 until: Sun Jul 07 13:40:29 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
-     *          SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
-     *          SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
+     * MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
+     * SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
+     * SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
      * D1:DE:63:4A:26:6C:65:A8:54:A2:64<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   DigitalSignature<br>
+     * DigitalSignature<br>
      * ]<br>
      * </code>
      */
@@ -265,18 +265,18 @@ public interface Fixtures
      * Serial number: 259901fe<br>
      * Valid from: Fri Jul 22 13:40:30 CEST 2016 until: Sun Jul 07 13:40:30 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *         MD5:  D8:06:8A:06:FE:D6:79:5E:E6:BA:36:EB:A9:1D:D1:27<br>
-     *         SHA1: DB:69:C9:BF:C4:C0:7B:5D:C8:DB:67:37:1C:14:F6:AF:4A:94:93:1E<br>
-     *         SHA256: 59:32:F5:16:E5:99:9F:3E:A9:2E:B1:60:78:13:12:CC:F7:FF:1D:8A:1A:12:23:85:79:47:25:8B:61:BD:E0:E9<br>
-     *         Signature algorithm name: SHA1withDSA<br>
-     *         Version: 3<br>
+     * MD5:  D8:06:8A:06:FE:D6:79:5E:E6:BA:36:EB:A9:1D:D1:27<br>
+     * SHA1: DB:69:C9:BF:C4:C0:7B:5D:C8:DB:67:37:1C:14:F6:AF:4A:94:93:1E<br>
+     * SHA256: 59:32:F5:16:E5:99:9F:3E:A9:2E:B1:60:78:13:12:CC:F7:FF:1D:8A:1A:12:23:85:79:47:25:8B:61:BD:E0:E9<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   Key_CertSign<br>
-     *   Crl_Sign<br>
+     * Key_CertSign<br>
+     * Crl_Sign<br>
      * ]<br>
      * </code>
      */
@@ -301,18 +301,18 @@ public interface Fixtures
      * Serial number: 296faac0<br>
      * Valid from: Fri Jul 22 13:40:29 CEST 2016 until: Sun Jul 07 13:40:29 CEST 2019<br>
      * Certificate fingerprints:<br>
-     *          MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
-     *          SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
-     *          SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
+     * MD5:  A5:AF:47:6F:C0:D5:A6:EF:F3:18:9B:7B:67:67:DA:49<br>
+     * SHA1: A3:F3:48:3E:F7:28:47:0E:F2:30:75:06:7C:E4:ED:2A:00:4A:47:97<br>
+     * SHA256: BB:E9:24:E9:E6:A2:BC:13:52:46:6A:E1:F2:85:F5:2A:0B:41:1B:96:6F:<br>
      * D1:DE:63:4A:26:6C:65:A8:54:A2:64<br>
-     *          Signature algorithm name: SHA1withDSA<br>
-     *          Version: 3<br>
+     * Signature algorithm name: SHA1withDSA<br>
+     * Version: 3<br>
      * <br>
      * Extensions:<br>
      * <br>
      * #1: ObjectId: 2.5.29.15 Criticality=false<br>
      * KeyUsage [<br>
-     *   DigitalSignature<br>
+     * DigitalSignature<br>
      * ]<br>
      * </code>
      */

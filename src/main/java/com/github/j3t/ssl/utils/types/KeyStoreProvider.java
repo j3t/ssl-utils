@@ -1,14 +1,12 @@
-
 package com.github.j3t.ssl.utils.types;
 
 
 /**
  * Constants with names of key store providers.
- * 
+ *
  * @author j3t
  */
-public interface KeyStoreProvider
-{
+public interface KeyStoreProvider {
     String SUN_PKCS11 = "SunPKCS11";
     String SUN = "SUN";
     String SUN_RSA_SIGN = "SunRsaSign";

@@ -1,24 +1,8 @@
-
 package com.github.j3t.ssl.utils;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assume.assumeTrue;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.Random;
-
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLHandshakeException;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.github.j3t.ssl.utils.test.Fixtures;
+import com.github.j3t.ssl.utils.types.SslProtocol;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -28,19 +12,30 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.j3t.ssl.utils.test.Fixtures;
-import com.github.j3t.ssl.utils.types.SslProtocol;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.Random;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assume.assumeTrue;
 
 /**
  * @author eexthlr
  */
-public class TLS12Test
-{
+public class TLS12Test {
     private static URI request;
 
     @BeforeClass
-    public static void startTSL12ServerOnRandomListenerPort() throws Exception
-    {
+    public static void startTSL12ServerOnRandomListenerPort() throws Exception {
         int port = new Random().nextInt(1024 * 64 - 1 - 1024) + 1024;
         request = new URI("https", null, "localhost", port, null, null, null);
 
@@ -57,56 +52,48 @@ public class TLS12Test
         Server server = new Server();
         server.addConnector(https);
         server.setStopAtShutdown(true);
-        server.setHandler(new AbstractHandler()
-            {
+        server.setHandler(new AbstractHandler() {
 
-                @Override
-                public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                        throws IOException, ServletException
-                {
-                    response.setStatus(HttpStatus.OK_200);
-                    response.getWriter().print("Ok");
-                    baseRequest.setHandled(true);
-                }
-            });
+            @Override
+            public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
+                    throws IOException, ServletException {
+                response.setStatus(HttpStatus.OK_200);
+                response.getWriter().print("Ok");
+                baseRequest.setHandled(true);
+            }
+        });
         server.start();
     }
 
-    private String executeRequest() throws Exception
-    {
+    private String executeRequest() throws Exception {
         SSLContext sslContext = SSLContextBuilder.create()
                 .setKeyStore(Fixtures.KEYSTORE_CLIENT)
                 .setKeyStorePassword("PtUPmi#o")
                 .setTrustStore(Fixtures.TRUSTSTORE_CLIENT)
                 .build();
-        
+
         HttpsURLConnection conn = (HttpsURLConnection) request.toURL().openConnection();
         conn.setSSLSocketFactory(sslContext.getSocketFactory());
         InputStream in = conn.getInputStream();
 
-        try
-        {
+        try {
             return new BufferedReader(new InputStreamReader(in)).readLine();
-        }
-        finally
-        {
+        } finally {
             in.close();
         }
     }
 
     @Test
-    public void givenClientWithJava7OrHigher_whenRequestExceutedAndServerSupportsTLS12Only_thenRequestShouldBeAnsweredWithOk() throws Exception
-    {
+    public void givenClientWithJava7OrHigher_whenRequestEexceutedAndServerSupportsTLS12Only_thenRequestShouldBeAnsweredWithOk() throws Exception {
         assumeTrue("Java Version isn't 1.7 or higher!", EnvironmentHelper.isJava7OrHigher());
 
         assertEquals("Ok", executeRequest());
     }
-    
+
     @Test(expected = SSLHandshakeException.class)
-    public void givenJavaWithJava6_whenRequestExecutedWithJava6_thenExceptionShouldBeThrown() throws Exception
-    {
+    public void givenJavaWithJava6_whenRequestExecutedWithJava6_thenExceptionShouldBeThrown() throws Exception {
         assumeTrue("Java Version isn't 1.6!", EnvironmentHelper.isJava6());
-        
+
         executeRequest();
     }
 }

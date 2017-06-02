@@ -1,34 +1,27 @@
-
 package com.github.j3t.ssl.utils;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.github.j3t.ssl.utils.types.KeyUsage;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.j3t.ssl.utils.CertificateHelper;
-import com.github.j3t.ssl.utils.KeyStoreBuilder;
-import com.github.j3t.ssl.utils.KeyStoreHelper;
-import com.github.j3t.ssl.utils.types.KeyUsage;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test key store building with key byte array.
+ *
  * @author j3t
  */
-public class KeyStoreBuilderKeyByteArrayTest
-{
+public class KeyStoreBuilderKeyByteArrayTest {
     private KeyStore keyStore;
-    private byte[] key;
 
     @Before
-    public void setUp() throws Exception
-    {
-        key = new byte[] {-2, -19, -2, -19, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 99, 108, 105, 101, 110, 116, 0, 0, 1, 86, 7, 74, -96, -73, 0, 0, 1, -113,
+    public void setUp() throws Exception {
+        byte[] key = new byte[]{-2, -19, -2, -19, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 99, 108, 105, 101, 110, 116, 0, 0, 1, 86, 7, 74, -96, -73, 0, 0, 1, -113,
                 48, -126, 1, -117, 48, 14, 6, 10, 43, 6, 1, 4, 1, 42, 2, 17, 1, 1, 5, 0, 4, -126, 1, 119, -6, 97, 12, 57, 58, 25, 16, 15, -100, 90, 92, 29, 64,
                 -23, 37, 77, -23, -20, -57, -87, -69, 26, 22, 127, -25, 104, 18, -7, -15, -10, -83, 95, 26, -117, 47, 99, 17, 10, 71, -31, -91, -126, -74, 114,
                 -35, 124, -22, -23, -56, -97, 119, -45, -17, 57, 61, -108, 95, 92, -64, -96, 115, 8, 119, -122, -114, -55, 20, -93, -76, 118, -14, 110, -12, 84,
@@ -74,8 +67,7 @@ public class KeyStoreBuilderKeyByteArrayTest
     }
 
     @Test
-    public void keyStoreShouldContainsClientAlias() throws Exception
-    {
+    public void keyStoreShouldContainsClientAlias() throws Exception {
         String[] aliases = KeyStoreHelper.getAliases(keyStore);
 
         assertEquals(1, aliases.length);
@@ -83,8 +75,7 @@ public class KeyStoreBuilderKeyByteArrayTest
     }
 
     @Test
-    public void certificateShouldSupportKeyUsageDigitalSignature() throws Exception
-    {
+    public void certificateShouldSupportKeyUsageDigitalSignature() throws Exception {
         Certificate cert = keyStore.getCertificate("client");
 
         assertEquals(1, CertificateHelper.getKeyUsages(cert).length);
