@@ -10,20 +10,20 @@ import java.security.cert.X509Certificate;
 import java.util.*;
 
 /**
- * Helper class to retrieve data from a certificate.
+ * Helper class for {@link Certificate} objects.
  *
  * @author j3t
  */
 public final class CertificateHelper {
 
     /**
-     * Gets the start date of the validity period of the given certificate.
+     * Returns the start date of the validity period of the given certificate.
      *
      * @param certificate the given certificate
-     * @return the start date of the validity period, or <code>null</code> if the certificate isn't an X.509 certificate
+     * @return the start date of the validity period, or <code>null</code> if the certificate isn't a X.509 certificate
      * @throws IllegalArgumentException if the certificate is <code>null</code>
      */
-    public static Date getStartDate(Certificate certificate) {
+    public static Date getValidityStart(Certificate certificate) {
         checkCertificate(certificate);
 
         if (X509Certificate.class.isAssignableFrom(certificate.getClass()))
@@ -33,13 +33,13 @@ public final class CertificateHelper {
     }
 
     /**
-     * Gets the end date of the validity period of the given certificate.
+     * Returns the end date of the validity period of the given certificate.
      *
      * @param certificate the given certificate
-     * @return the end date of the validity period, or <code>null</code> if the certificate isn't an X.509 certificate
+     * @return the end date of the validity period, or <code>null</code> if the certificate isn't a X.509 certificate
      * @throws IllegalArgumentException if the certificate is <code>null</code>
      */
-    public static Date getEndDate(Certificate certificate) {
+    public static Date getValidityEnd(Certificate certificate) {
         checkCertificate(certificate);
 
         if (X509Certificate.class.isAssignableFrom(certificate.getClass()))
@@ -49,36 +49,63 @@ public final class CertificateHelper {
     }
 
     /**
-     * Gets the details (keyUsage, expirationDate, issuer, ...) of the certificate.
+     * Returns the details (keyUsage, expirationDate, issuer, ...) of the given certificate.
      *
      * @param certificate the given certificate
      * @return {@link String}, shouldn't be <code>null</code>
      * @throws IllegalArgumentException if the certificate is <code>null</code>
      */
     public static String getDetails(Certificate certificate) {
-        return String.format("keyUsage=%s, expirationDate=%s, issuer=%s",
-                Arrays.toString(getKeyUsages(certificate)),
-                getEndDate(certificate),
-                getIssuer(certificate));
+        return new StringBuilder()
+                .append(String.format("Certificate details:%n"))
+                .append(String.format("%4sSignature Algorithm: %s%n", " ", getSignatureAlgorithm(certificate)))
+                .append(String.format("%4sKeyUsage: %s%n", " ", StringHelper.arrayToCommaSeparatedString(getKeyUsages(certificate))))
+                .append(String.format("%4sValidity:%n", " "))
+                .append(String.format("%8sNot before: %s%n", " ", getValidityStart(certificate)))
+                .append(String.format("%8sNot after : %s%n", " ", getValidityEnd(certificate)))
+                .append(String.format("%4sIssuer : %s%n", " ", getIssuer(certificate)))
+                .append(String.format("%4sSubject: %s%n", " ", getSubject(certificate)))
+                .toString();
     }
 
     /**
-     * Gets the issuer of the given certificate.
+     * Returns the signature algorithm of the given certificate.
      *
      * @param certificate the certificate
      * @return {@link String} (e.g. CN=DigiCert Assured ID Root G3, OU=www.digicert.com, O=DigiCert Inc, C=US) or an
      * empty String if the certificate isn't a x509 certificate, shouldn't be <code>null</code>
-     * @throws IllegalArgumentException if the certificate is <code>null</code> or not an X.509 certificate
+     * @throws IllegalArgumentException if the certificate is <code>null</code> or not a X.509 certificate
      */
-    public static String getIssuer(Certificate certificate) {
-        if (certificate == null)
-            throw new IllegalArgumentException("certificate must not be null!");
-
-        return castToX509CertificateOrThrowException(certificate).getIssuerX500Principal().toString();
+    public static String getSignatureAlgorithm(Certificate certificate) {
+        return castToX509CertificateOrThrowException(certificate).getSigAlgName();
     }
 
     /**
-     * Gets the issuers of a given certificate chain.
+     * Returns the subject of the given certificate.
+     *
+     * @param certificate the certificate
+     * @return {@link String} (e.g. CN=DigiCert Assured ID Root G3, OU=www.digicert.com, O=DigiCert Inc, C=US) or an
+     * empty String if the certificate isn't a x509 certificate, shouldn't be <code>null</code>
+     * @throws IllegalArgumentException if the certificate is <code>null</code> or not a X.509 certificate
+     */
+    public static String getSubject(Certificate certificate) {
+        return castToX509CertificateOrThrowException(certificate).getSubjectX500Principal().getName();
+    }
+
+    /**
+     * Returns the issuer of the given certificate.
+     *
+     * @param certificate the certificate
+     * @return {@link String} (e.g. CN=DigiCert Assured ID Root G3, OU=www.digicert.com, O=DigiCert Inc, C=US) or an
+     * empty String if the certificate isn't a x509 certificate, shouldn't be <code>null</code>
+     * @throws IllegalArgumentException if the certificate is <code>null</code> or not a X.509 certificate
+     */
+    public static String getIssuer(Certificate certificate) {
+        return castToX509CertificateOrThrowException(certificate).getIssuerX500Principal().getName();
+    }
+
+    /**
+     * Returns the issuers of a given certificate chain.
      *
      * @param certificateChain the certificate
      * @return {@link String} (e.g. CN=DigiCert Assured ID Root G3, OU=www.digicert.com, O=DigiCert Inc, C=US) or an
@@ -98,7 +125,7 @@ public final class CertificateHelper {
     }
 
     /**
-     * Gets the {@link KeyUsage}s of the given certificate.
+     * Returns the {@link KeyUsage}s of the given certificate.
      *
      * @param certificate the certificate
      * @return array with {@link KeyUsage}-Objects or an empty array if the certificate has not any {@link KeyUsage}s
@@ -138,14 +165,14 @@ public final class CertificateHelper {
     }
 
     /**
-     * Checks that a certificate of the given chain has a specific {@link KeyUsage}.
+     * Checks that at least one certificate from the given chain has a specific {@link KeyUsage}.
      *
      * @param certificateChain the given certificate chain
      * @param keyUsage         the specific {@link KeyUsage}
      * @return <code>true</code> if at least one certificate has this specific {@link KeyUsage}, otherwise
      * <code>false</code>
-     * @throws IllegalArgumentException if the certificate chain is <code>null</code> or contains at least one non X.509
-     *                                  certificate
+     * @throws IllegalArgumentException if the certificate chain is <code>null</code> or the chain contains at least one
+     *                                  non X.509 certificate
      */
     public static boolean isKeyUsagePresent(Certificate[] certificateChain, KeyUsage keyUsage) {
         checkCertificateChain(certificateChain);

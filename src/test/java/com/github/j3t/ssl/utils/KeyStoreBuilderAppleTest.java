@@ -26,12 +26,14 @@ public class KeyStoreBuilderAppleTest {
     }
 
     @Test
-    public void givenAppleKeyStore_whenBuildOnMac_thenKeyStoreShouldBeNotNull() throws Exception {
+    public void testKeyStoreBuilderWithDefaultMacOSKeyStore() throws Exception {
+        // given KeyStoreBuilder with default MacOS key store
         KeyStore keyStore = builder
                 .setType(KEYCHAIN_STORE)
                 .setProvider(APPLE)
                 .build();
-
+        // when build is finished
+        // then key store should be created
         assertNotNull(keyStore);
     }
 

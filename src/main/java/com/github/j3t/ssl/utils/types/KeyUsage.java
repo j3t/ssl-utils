@@ -4,8 +4,8 @@ package com.github.j3t.ssl.utils.types;
 import java.security.cert.X509Certificate;
 
 /**
- * Constants representing the key usages extension of x509 certificates. The key usage extension defines the purpose (e.g.,
- * encipherment, signature, certificate signing) of the key contained in the certificate.
+ * Constants representing the key usages extension of x509 certificates. The key usage extension defines the purpose
+ * (e.g., encipherment, signature, certificate signing) of the key contained in the certificate.
  *
  * @author j3t
  * @see X509Certificate#getKeyUsage()

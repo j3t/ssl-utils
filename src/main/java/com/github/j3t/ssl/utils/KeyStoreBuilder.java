@@ -167,9 +167,10 @@ public class KeyStoreBuilder {
      * @throws NoSuchProviderException  if the specified provider is not registered in the security provider list.
      * @throws IllegalArgumentException if the provider name is null or empty.
      * @throws IllegalAccessException   if the {@link #setFixAliases(boolean)} is set to <code>true</code>
-     * @throws IOException              if there is an I/O or format problem with the keystore data, if a password is required but
-     *                                  not given, or if the given password was incorrect. If the error is due to a wrong password, the cause
-     *                                  of the IOException should be an UnrecoverableKeyException
+     * @throws IOException              if there is an I/O or format problem with the keystore data, if a password is
+     *                                  required but not given, or if the given password was incorrect. If the error is
+     *                                  due to a wrong password, the cause of the IOException should be an
+     *                                  UnrecoverableKeyException
      * @throws NoSuchAlgorithmException if the algorithm used to check the integrity of the keystore cannot be found
      * @throws CertificateException     if any of the certificates in the keystore could not be loaded
      */

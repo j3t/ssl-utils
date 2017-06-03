@@ -33,9 +33,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 /**
- * Integration test with a local server and client. The server is started with his own key-
+ * Integration test with a local HTTP server and client. The server is started with his own key-
  * ({@link Fixtures#KEYSTORE_SERVER}) and trust-store ({@link Fixtures#TRUSTSTORE_SERVER}). Each test creates a
- * different client configuration, sends a request to the server and checked the result.
+ * different client configuration, sends a request to the server and checks the result.
  *
  * @author j3t
  */
@@ -44,7 +44,7 @@ public class SSLContextBuilderIT {
 
     @BeforeClass
     public static void startServerOnRandomListenerPort() throws Exception {
-        int port = new Random().nextInt(1024 * 64 - 1 - 1024) + 1024;
+        int port = new Random().nextInt(1024 * 63 - 1) + 1024;
         request = new URI("https", null, "localhost", port, null, null, null);
 
         SslContextFactory sslContextFactory = new SslContextFactory();

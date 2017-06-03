@@ -26,7 +26,10 @@ public class SSLContextBuilderProtocolTest {
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][]{
                 {EnvironmentHelper.isJava6(), SslProtocol.TLSv10},
+                {EnvironmentHelper.isJava7(), SslProtocol.TLSv12},
                 {EnvironmentHelper.isJava7OrHigher(), SslProtocol.TLSv12},
+                {EnvironmentHelper.isJava8(), SslProtocol.TLSv12},
+                {EnvironmentHelper.isJava8OrHigher(), SslProtocol.TLSv12},
         });
     }
 

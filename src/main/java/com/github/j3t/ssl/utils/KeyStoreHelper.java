@@ -78,7 +78,7 @@ public final class KeyStoreHelper {
     }
 
     /**
-     * Returns a human readable representation of a {@link KeyStore}.
+     * Returns an human readable representation of the given {@link KeyStore}.
      *
      * @param keyStore the given {@link KeyStore}
      * @return {@link String}, shouldn't be <code>null</code>
@@ -95,7 +95,7 @@ public final class KeyStoreHelper {
     }
 
     /**
-     * Returns a human readable representation of the aliases from a given key store.
+     * Returns an human readable representation of the aliases from a given key store.
      *
      * @param keyStore the given {@link KeyStore}
      * @param aliases  the given aliases

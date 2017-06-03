@@ -10,9 +10,10 @@ import com.github.j3t.ssl.utils.types.SslProtocol;
 import javax.net.ssl.*;
 import java.io.IOException;
 import java.security.*;
+import java.util.Arrays;
 
 /**
- * A builder pattern style factory to create a {@link SSLContext}.
+ * A builder pattern style factory for the creation of {@link SSLContext} objects.
  *
  * @author j3t
  */
@@ -28,7 +29,6 @@ public class SSLContextBuilder {
 
     private SecureRandom secureRandomGenerator;
     private String protocol;
-    private TrustManager[] trustManagers;
 
     /**
      * Creates a new {@link SSLContextBuilder} instance.
@@ -48,7 +48,6 @@ public class SSLContextBuilder {
         trustStore = null;
         trustManagerAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
         trustManagerStrategy = null;
-        trustManagers = null;
 
         secureRandomGenerator = null;
         protocol = null;
@@ -68,7 +67,7 @@ public class SSLContextBuilder {
     }
 
     /**
-     * Set up the algorithm name of the TrustManagerFactory.<br>
+     * Set up the algorithm of the TrustManagerFactory.<br>
      * <br>
      * Default: {@link TrustManagerFactory#getDefaultAlgorithm()}
      *
@@ -91,21 +90,6 @@ public class SSLContextBuilder {
      */
     public SSLContextBuilder setTrustManagerStrategy(TrustManagerStrategy trustManagerStrategy) {
         this.trustManagerStrategy = trustManagerStrategy;
-        return this;
-    }
-
-    /**
-     * Set up a strategy to establish trustworthiness of certificates independent of the trustworthiness in the trust
-     * store. This is an alternative to {@link #setTrustManagerStrategy(TrustManagerStrategy)} and can also used to to
-     * override the standard certificate verification process.<br>
-     * <br>
-     * Default: none
-     *
-     * @param trustManagers the {@link TrustManager}s
-     * @return this @link SSLContextBuilder}
-     */
-    public SSLContextBuilder setTrustManagers(TrustManager[] trustManagers) {
-        this.trustManagers = trustManagers;
         return this;
     }
 
@@ -144,7 +128,7 @@ public class SSLContextBuilder {
      * @return this @link SSLContextBuilder}
      */
     public SSLContextBuilder setKeyStorePassword(String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword != null ? keyStorePassword.toCharArray() : null;
+        setKeyStorePassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
         return this;
     }
 
@@ -245,14 +229,10 @@ public class SSLContextBuilder {
     }
 
     protected TrustManager[] createTrustManagers() throws NoSuchAlgorithmException, KeyStoreException {
-        TrustManager[] trustManagers = this.trustManagers;
+        TrustManagerFactory instance = TrustManagerFactory.getInstance(trustManagerAlgorithm);
+        instance.init(trustStore);
 
-        if (trustManagers == null) {
-            TrustManagerFactory instance = TrustManagerFactory.getInstance(trustManagerAlgorithm);
-            instance.init(trustStore);
-
-            trustManagers = instance.getTrustManagers();
-        }
+        TrustManager[] trustManagers = instance.getTrustManagers();
 
         if (trustManagerStrategy != null)
             trustManagers = addStrategy(trustManagers);
@@ -267,15 +247,8 @@ public class SSLContextBuilder {
     protected KeyManager[] addStrategy(KeyManager[] keyManagers) {
         KeyManager[] kms = new KeyManager[keyManagers.length];
 
-        for (int i = 0; i < keyManagers.length; i++) {
-            KeyManager keyManager = keyManagers[i];
-
-            if (keyManager instanceof X509KeyManager)
-                kms[i] = new StrategyKeyManager((X509KeyManager) keyManager, keyManagerStrategy);
-
-            else
-                kms[i] = keyManager;
-        }
+        for (int i = 0; i < keyManagers.length; i++)
+            kms[i] = new StrategyKeyManager((X509KeyManager) keyManagers[i], keyManagerStrategy);
 
         return kms;
     }
@@ -283,15 +256,8 @@ public class SSLContextBuilder {
     protected TrustManager[] addStrategy(TrustManager[] trustManagers) {
         TrustManager[] tms = new TrustManager[trustManagers.length];
 
-        for (int i = 0; i < trustManagers.length; i++) {
-            TrustManager trustManager = trustManagers[i];
-
-            if (trustManager instanceof X509TrustManager)
-                tms[i] = new StrategyTrustManager((X509TrustManager) trustManager, trustManagerStrategy);
-
-            else
-                tms[i] = trustManager;
-        }
+        for (int i = 0; i < trustManagers.length; i++)
+            tms[i] = new StrategyTrustManager((X509TrustManager) trustManagers[i], trustManagerStrategy);
 
         return tms;
     }
