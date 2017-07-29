@@ -38,9 +38,9 @@
     </licenses>
 
     <scm>
-        <url>https://github.com/j3t/ssl-utils</url>
-        <connection>scm:git:git@github.com:git://github.com/j3t/ssl-utils.git</connection>
+        <connection>scm:git:https://github.com/j3t/ssl-utils.git</connection>
         <developerConnection>scm:git:git@github.com:j3t/ssl-utils.git</developerConnection>
+        <url>https://github.com/j3t/ssl-utils</url>
     </scm>
 
     <developers>
