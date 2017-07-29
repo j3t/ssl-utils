@@ -1,11 +1,7 @@
 language: java
 
-sudo: required
-
 matrix:
   include:
-    - os: linux
-      jdk: openjdk6
     - os: linux
       jdk: openjdk7
     - os: linux
@@ -15,15 +11,7 @@ matrix:
     - os: osx
       osx_image: xcode7.3
 
-# fix buffer overflow in OpenJDK6 and OpenJDK 7 see https://github.com/travis-ci/travis-ci/issues/5227
-before_install:
-  - cat /etc/hosts # optionally check the content *before*
-  - sudo hostname "$(hostname | cut -c1-63)"
-  - sed -e "s/^\\(127\\.0\\.0\\.1.*\\)/\\1 $(hostname | cut -c1-63)/" /etc/hosts | sudo tee /etc/hosts
-  - cat /etc/hosts # optionally check the content *after*
-
 script:
-  - if [ "$JAVA_HOME" == "/usr/lib/jvm/java-6-openjdk-amd64" ]; then sh ./add_coveralls_to_cacerts.sh; fi;
   - mvn verify coveralls:report -DrepoToken=$repo_token_coveralls
 
 after_success:
