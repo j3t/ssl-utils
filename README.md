@@ -14,6 +14,34 @@ In the diagram below (Source: [Oracle](http://docs.oracle.com/javase/7/docs/tech
 
 ssl-utils provides some builder to create key materials easily and quickly. There are also helpers to access the key materials and to control the runtime behavior. The library is written in Java and requires version 6 or higher.
 
+## KeyStoreBuilder
+The [KeyStoreBuilder](src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (key materials). To create a KeyStore, the type and the provider must be configured.
+
+The following example sets up a PKCS #12 key store, while the private keys are provided by a file ...
+```java
+KeyStore keyStore = KeyStoreBuilder.create()
+		.setType(KeyStoreType.PKCS12)
+		.setPath("/path/to/cert.p12")  // have to be absolute
+		.build();
+```
+
+It is also possible to using a custom PKCS #11 provider. Note: The provider must already be registered.
+```java
+KeyStore keyStore = KeyStoreBuilder.create()
+		.setType(KeyStoreType.PKCS11)
+		.setProvider("CustomProvider") // name of the security provider
+		.build();
+```
+
+An other option is to access a PKCS #11 key store via a library (e.g. smart card reader).
+```java
+KeyStore keyStore = KeyStoreBuilder.create()
+		.setType(KeyStoreType.PKCS11)
+		.setLibraryPath("/path/to/pkcs11.lib") // have to be absolute
+		.setPassword("123456") // optional, password or pin to access the store
+		.build();
+```
+
 ## SSLContextBuilder
 The [SSLContextBuilder](src/main/java/com/github/j3t/ssl/utils/SSLContextBuilder.java) is a builder-pattern style factory to create a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html).
 
@@ -23,7 +51,7 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-or set up your own key- and trust-store ...
+you can also build a [SSLContext](http://docs.oracle.com/javase/7/docs/api/javax/net/ssl/SSLContext.html) with existing key- and trust-store ...
 ```java
 KeyStore trustStore = ...
 KeyStore keyStore = ...
@@ -34,16 +62,14 @@ SSLContext sslContext = SSLContextBuilder.create()
 		.build();
 ```
 
-To control the alias selection during the authentication, you must configure an [KeyManagerStrategy](src/main/java/com/github/j3t/ssl/utils/strategy/KeyManagerStrategy.java).
-
-The following snippet chooses the certificate/key with the alias "MyAlias" during the authentication proccess. This is needed if the key store contains more then one alias, otherwise the first alias is selected.
+or you can also register a [KeyManagerStrategy](src/main/java/com/github/j3t/ssl/utils/strategy/KeyManagerStrategy.java) to specify an alias which will be selected when there are more than one in the key store ..
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setKeyManagerStrategy(() -> "MyAlias")
 		.build();
 ```
 
-or use the [KeyStoreHelper](src/main/java/com/github/j3t/ssl/utils/KeyStoreHelper.java) to find certificates/aliases with a specific key usage. This is useful if the key store contains multiple certificates with different [key usages](src/main/java/com/github/j3t/ssl/utils/types/KeyUsage.java) and the proccess requires a specific key usage. The following snippet chooses the first alias found with the key usage DIGITAL_SIGNATURE.
+or use the [KeyStoreHelper](src/main/java/com/github/j3t/ssl/utils/KeyStoreHelper.java) to find certificates supporting a key usage.
 ```java
 KeyStore keyStore = ...
 SSLContext sslContext = SSLContextBuilder.create()
@@ -54,44 +80,17 @@ SSLContext sslContext = SSLContextBuilder.create()
 
 To control the trustworthiness of peers - independent of the trust manager of the actual context - the [TrustManagerStrategy](src/main/java/com/github/j3t/ssl/utils/strategy/TrustManagerStrategy.java) must be configured.
 
-The following snippet overrule the result of the trust manager validation (trust any certificate/peer) ...
+The following example overrule the result of the trust manager validation (trust any certificate/peer) ...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy((chain, authType) -> true)
 		.build();
 ```
 
-You can also use the [CertificateHelper](src/main/java/com/github/j3t/ssl/utils/CertificateHelper.java) to find a certificate/key contains a specific issuer ...
+The next example uses the [CertificateHelper](src/main/java/com/github/j3t/ssl/utils/CertificateHelper.java) to find a certificate where the issuer is `MyIssure`...
 ```java
 SSLContext sslContext = SSLContextBuilder.create()
 		.setTrustManagerStrategy((chain, authType) -> CertificateHelper.getIssuers(chain).contains("CN=MyIssuer"))
 		.build();
 ```
 
-## KeyStoreBuilder
-The [KeyStoreBuilder](src/main/java/com/github/j3t/ssl/utils/KeyStoreBuilder.java) is a builder-pattern style factory to create a [KeyStore](http://docs.oracle.com/javase/7/docs/api/java/security/KeyStore.html). The KeyStore represents a storage facility for cryptographic keys and certificates (key materials). To create a KeyStore, the type and the provider must be configured.
-
-To access a PKCS #12 key store, the type must be set to 'PKCS12' and path must be the absolute path to the certificate file.
-```java
-KeyStore keyStore = KeyStoreBuilder.create()
-		.setType(KeyStoreType.PKCS12)
-		.setPath("/path/to/cert.p12")
-		.build();
-```
-
-To access a PKCS #11 key store, the type must be set to 'PKCS11' and name must be the name of the provider. Note: The provider must already be registered.
-```java
-KeyStore keyStore = KeyStoreBuilder.create()
-		.setType(KeyStoreType.PKCS11)
-		.setProvider("CustomProvider")
-		.build();
-```
-
-To access a PKCS #11 key store with a provided library (e.g. smart card reader), the type must be set to 'PKCS11' and libraryPath must be the absolute path to the library.
-```java
-KeyStore keyStore = KeyStoreBuilder.create()
-		.setType(KeyStoreType.PKCS11)
-		.setLibraryPath("/path/to/pkcs11.lib")
-		.setPassword("123456") // optional, password or pin to access the store
-		.build();
-```
